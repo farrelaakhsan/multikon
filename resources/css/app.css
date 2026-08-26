@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --brand-900: #1E293B;
+    --brand-amber: #F59E0B;
+    --brand-amber-soft: #FEF3C7;
+
+    --surface: #FFFFFF;
+    --surface-alt: #F8F9FA;
+    --surface-muted: #F1F5F9;
+    --border: #E2E8F0;
+    --border-strong: #CBD5E1;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-muted: #94A3B8;
+
+    --status-pending-bg: #FEF3C7;
+    --status-pending-fg: #92400E;
+    --status-review-bg: #EDE9FE;
+    --status-review-fg: #6D28D9;
+    --status-process-bg: #DBEAFE;
+    --status-process-fg: #1D4ED8;
+    --status-shipped-bg: #E0E7FF;
+    --status-shipped-fg: #4338CA;
+    --status-success-bg: #D1FAE5;
+    --status-success-fg: #047857;
+    --status-danger-bg: #FEE2E2;
+    --status-danger-fg: #B91C1C;
+
+    --banner-info-border: #3B82F6;
+    --banner-warning-border: #F59E0B;
+    --banner-success-border: #10B981;
+    --banner-purple-border: #8B5CF6;
+}
+
+html,
+body,
+#app {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--surface-alt);
+    color: var(--text-primary);
+    font-family: "Figtree", ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+button {
+    font: inherit;
+}
+
+/* ─── Chatbot Animations ──────────────────────────────────────────── */
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes messageIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulseSoft {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+    }
+}
+
+@keyframes bounceDot {
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-6px);
+    }
+}
+
+.chatbot-window-enter {
+    animation: slideUp 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.chatbot-message-enter {
+    animation: messageIn 0.22s ease forwards;
+}
+
+.chatbot-toggle-pulse {
+    animation: pulseSoft 2.2s ease-in-out infinite;
+}
+
+.dot-1 {
+    animation: bounceDot 1.3s ease-in-out 0s infinite;
+}
+.dot-2 {
+    animation: bounceDot 1.3s ease-in-out 0.18s infinite;
+}
+.dot-3 {
+    animation: bounceDot 1.3s ease-in-out 0.36s infinite;
+}
+
+/* ─── Page Utilities ──────────────────────────────────────────────── */
+
+.line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+/* ─── Toast Animation ──────────────────────────────────────────────── */
+
+@keyframes fade-in {
+    from {
+        transform: translate(-50%, -20px);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+}
