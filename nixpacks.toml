@@ -2,11 +2,11 @@
 providers = ["php", "node"]
 
 [phases.setup]
-nixPkgs = ["php82", "php82Extensions.pdo_mysql", "php82Extensions.mysqli", "nodejs_20"]
+nixPkgs = ["php83", "php83Extensions.pdo_mysql", "php83Extensions.mysqli", "php83Extensions.gd", "php83Extensions.mbstring", "php83Extensions.zip", "php83Extensions.bcmath", "php83Extensions.curl", "php83Extensions.xml", "php83Extensions.fileinfo", "nodejs_20"]
 
 [phases.install]
 cmds = [
-  "composer install --no-dev --optimize-autoloader",
+  "composer install --no-dev --optimize-autoloader --no-interaction",
   "npm install"
 ]
 
@@ -16,4 +16,4 @@ cmds = [
 ]
 
 [phases.start]
-cmd = "php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+cmd = "php artisan migrate --force; php artisan storage:link || true; php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
