@@ -15,5 +15,5 @@ cmds = [
   "npm run build"
 ]
 
-[phases.start]
-cmd = "php artisan migrate --force; php artisan storage:link || true; NGINX_ROOT=/app/public php-fpm -D && nginx -g 'daemon off;'"
+[start]
+cmd = "php artisan migrate --force && php artisan storage:link || true && php artisan config:cache --quiet || true"
