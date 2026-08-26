@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
     const DISPLAY_COLUMNS = [
         'id',
         'name',
+        'slug',
         'category',
         'description',
         'image',
@@ -25,6 +27,7 @@ class Product extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'category',
         'description',
         'image',
@@ -65,6 +68,21 @@ class Product extends Model
     }
 
     protected $appends = ['image_url'];
+
+    protected static function booted(): void
+    {
+        static::saving(function (Product $product) {
+            if (empty($product->slug) && !empty($product->name)) {
+                $base = Str::slug($product->name);
+                $slug = $base;
+                $i = 2;
+                while (static::where('slug', $slug)->where('id', '!=', $product->id ?? 0)->exists()) {
+                    $slug = $base . '-' . $i++;
+                }
+                $product->slug = $slug;
+            }
+        });
+    }
 
     public function orders(): HasMany
     {
