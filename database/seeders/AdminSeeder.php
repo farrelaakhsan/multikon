@@ -4,17 +4,18 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class AdminSeeder extends Seeder
 {
     public function run(): void
     {
+        $plain = env('ADMIN_PASSWORD') ?: config('services.admin.password') ?: 'MultikonAdmin2026!';
+
         User::updateOrCreate(
             ['email' => 'admin@multikon.test'],
             [
                 'name' => 'Admin Multikon',
-                'password' => Hash::make(config('services.admin.password')),
+                'password' => $plain,
                 'is_admin' => true,
                 'email_verified_at' => now(),
             ]

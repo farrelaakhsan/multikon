@@ -15,7 +15,14 @@ class ProductSeeder extends Seeder
             return;
         }
 
-        $items = json_decode((string) file_get_contents($path), true);
+        $raw = (string) file_get_contents($path);
+        if (str_starts_with($raw, "\xFF\xFE") || str_starts_with($raw, "\xFE\xFF")) {
+            $raw = mb_convert_encoding($raw, 'UTF-8', 'UTF-16');
+        } elseif (str_contains($raw, "\0")) {
+            $raw = mb_convert_encoding($raw, 'UTF-8', 'UTF-16LE');
+        }
+        $raw = preg_replace('/^\xEF\xBB\xBF/', '', $raw);
+        $items = json_decode($raw, true);
         if (!is_array($items)) {
             return;
         }
