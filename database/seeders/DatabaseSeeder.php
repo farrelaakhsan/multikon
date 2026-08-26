@@ -11,8 +11,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Baris ini yang akan memanggil ProductSeeder kamu
         $this->call([
+            AdminSeeder::class,
             ProductSeeder::class,
         ]);
     }

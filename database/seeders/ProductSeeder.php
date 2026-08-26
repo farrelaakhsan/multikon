@@ -9,8 +9,9 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        Product::create([
-            'name' => 'Commercial Spiral Dough Mixer 20L / 8 Kg - Heavy Duty',
+        Product::updateOrCreate(
+            ['name' => 'Commercial Spiral Dough Mixer 20L / 8 Kg - Heavy Duty'],
+            [
             'category' => 'Mixer',
             'description' => "Commercial Spiral Mixer ini dirancang khusus untuk memenuhi kebutuhan adonan bertekstur kental dan berat dengan kapasitas besar pada dapur profesional. Tidak seperti mixer biasa, pengaduk (hook) dan mangkuk (bowl) pada mesin ini berputar secara bersamaan untuk menghasilkan adonan yang kalis sempurna, lembut, dan merata dalam waktu singkat.\n\nBisa digunakan untuk apa saja (Fungsi):\n\n* Mengaduk adonan roti berat seperti Roti Tawar, Baguette, dan Bun.\n* Membuat adonan Pizza berkualitas tinggi dengan tingkat kalis maksimal.\n* Mengolah adonan Donat dan Bakpao dalam jumlah massal.\n* Mencampur adonan Mie komersial yang membutuhkan tekstur padat.\n\nSangat Ideal Untuk:\nBakery, Restoran, Kafe, Hotel, Catering, dan UMKM Kuliner skala menengah hingga besar.",
             'image' => null,
