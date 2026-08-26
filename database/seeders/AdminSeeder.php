@@ -14,7 +14,7 @@ class AdminSeeder extends Seeder
             ['email' => 'admin@multikon.test'],
             [
                 'name' => 'Admin Multikon',
-                'password' => Hash::make(env('ADMIN_PASSWORD', 'admin123')),
+                'password' => Hash::make(config('services.admin.password')),
                 'is_admin' => true,
                 'email_verified_at' => now(),
             ]

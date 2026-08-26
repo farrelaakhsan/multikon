@@ -52,4 +52,8 @@ return [
         'couriers'             => env('RAJAONGKIR_COURIERS', 'jne:sicepat:ide:sap:jnt:ninja:tiki:lion:anteraja:pos:ncs:rex:rpx:sentral:star:wahana'),
     ],
 
+    'admin' => [
+        'password' => env('ADMIN_PASSWORD', 'MultikonAdmin2026!'),
+    ],
+
 ];
