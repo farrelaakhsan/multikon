@@ -70,7 +70,7 @@ export default function AddressFormModal({ open, address, onClose, csrfToken }) 
 
         setProcessing(true);
 
-        const url = isEdit ? `/addresses/${address.id}` : "/addresses";
+        const url = isEdit ? `/addresses/${address.address_id}` : "/addresses";
 
         const body = new URLSearchParams();
         body.append("label", label);

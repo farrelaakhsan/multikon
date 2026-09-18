@@ -63,7 +63,7 @@ class AdminController extends Controller
                     return [
                         'order_code'    => $o->order_code,
                         'customer_name' => $o->customer_name,
-                        'product_name'  => $firstItem?->product_name ?? $o->product?->name ?? '-',
+                        'product_name'  => $firstItem?->product_name ?? $o->product?->product_name ?? '-',
                         'status'        => $o->status,
                         'status_label'  => $activeStep ? 'Menunggu ' . $activeStep['label'] : 'Selesai',
                         'payment_label' => $o->payment_label,

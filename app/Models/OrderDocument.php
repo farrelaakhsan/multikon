@@ -2,11 +2,18 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuidPrimaryKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderDocument extends Model
 {
+    use HasUuidPrimaryKey;
+    protected $primaryKey = 'order_document_id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+    protected $uuidRouteKeyName = 'order_document_id';
+
     protected $fillable = [
         'order_id',
         'type',
@@ -23,12 +30,9 @@ class OrderDocument extends Model
 
     public function order(): BelongsTo
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class, 'order_id', 'order_id');
     }
 
-    /**
-     * URL publik lengkap untuk file PDF tersimpan.
-     */
     public function getFileUrlAttribute(): ?string
     {
         if (! $this->file_path) {
@@ -38,9 +42,6 @@ class OrderDocument extends Model
         return asset('storage/' . $this->file_path);
     }
 
-    /**
-     * Nama file untuk keperluan unduhan (download).
-     */
     public function getDownloadNameAttribute(): string
     {
         return basename($this->file_path);

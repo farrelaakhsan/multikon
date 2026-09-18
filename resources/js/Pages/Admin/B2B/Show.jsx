@@ -67,7 +67,7 @@ export default function B2BShow({ application }) {
         e.preventDefault();
         setProcessing("approve");
         setErrors({});
-        router.post(`/admin/b2b/${application.id}/approve`, approveData, {
+        router.post(`/admin/b2b/${application.b2b_application_id}/approve`, approveData, {
             onError: (errs) => {
                 setErrors(errs);
                 setProcessing(null);
@@ -84,7 +84,7 @@ export default function B2BShow({ application }) {
         setProcessing("reject");
         setErrors({});
         router.post(
-            `/admin/b2b/${application.id}/reject`,
+            `/admin/b2b/${application.b2b_application_id}/reject`,
             { rejection_reason: rejectReason },
             {
                 onError: (errs) => {
@@ -120,7 +120,7 @@ export default function B2BShow({ application }) {
                 </Link>
                 <span>/</span>
                 <span className="text-slate-800 font-medium">
-                    #{application.id}
+                    #{application.b2b_application_id}
                 </span>
             </div>
 
@@ -160,7 +160,7 @@ export default function B2BShow({ application }) {
                     />
                     <Field
                         label="Pengaju"
-                        value={`${application.user?.name || "-"} (${application.user?.email || "-"})`}
+                        value={`${application.user?.user_name || "-"} (${application.user?.email || "-"})`}
                     />
                     <Field
                         label={

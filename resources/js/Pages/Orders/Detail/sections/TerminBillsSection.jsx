@@ -162,7 +162,7 @@ function TerminCardMenungguVerifikasi({ stage, onChangeProof }) {
           onClick={onChangeProof}
           className="text-blue-600 text-[13px] font-medium px-3 hover:underline"
         >
-          Ubah bukti transfer
+          Ubah bukti pembayaran
         </button>
       </div>
     </div>

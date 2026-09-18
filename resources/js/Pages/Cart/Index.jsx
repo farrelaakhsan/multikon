@@ -20,13 +20,13 @@ export default function CartIndex({ items = [] }) {
         if (selectedIds.length === items.length) {
             setSelectedIds([]);
         } else {
-            setSelectedIds(items.map((i) => i.id));
+            setSelectedIds(items.map((i) => i.cart_item_id));
         }
     };
 
     const allSelected = items.length > 0 && selectedIds.length === items.length;
 
-    const selectedItems = items.filter((i) => selectedIds.includes(i.id));
+    const selectedItems = items.filter((i) => selectedIds.includes(i.cart_item_id));
     const selectedTotal = selectedItems.reduce((sum, i) => sum + i.subtotal, 0);
 
     const handleUpdateQty = (itemId, qty, maxStock) => {
@@ -103,9 +103,9 @@ export default function CartIndex({ items = [] }) {
                             <div className="lg:col-span-8 space-y-4">
                                 {items.map((item) => (
                                     <CartItemCard
-                                        key={item.id}
+                                        key={item.cart_item_id}
                                         item={item}
-                                        selected={selectedIds.includes(item.id)}
+                                        selected={selectedIds.includes(item.cart_item_id)}
                                         onToggle={toggleItem}
                                         onUpdateQty={handleUpdateQty}
                                         onRemove={handleRemove}

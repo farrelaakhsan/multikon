@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuidPrimaryKey;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,12 @@ use Illuminate\Support\Facades\Storage;
 
 class B2bApplication extends Model
 {
+    use HasUuidPrimaryKey;
+    protected $primaryKey = 'b2b_application_id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+    protected $uuidRouteKeyName = 'b2b_application_id';
+
     protected $fillable = [
         'user_id',
         'status',
@@ -33,12 +40,12 @@ class B2bApplication extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
     public function reviewer(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'reviewed_by');
+        return $this->belongsTo(User::class, 'reviewed_by', 'user_id');
     }
 
     public function getStatusLabelAttribute(): string

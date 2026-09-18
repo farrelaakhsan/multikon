@@ -41,7 +41,7 @@ export default function CustomTermin({ order }) {
     setLoadingCouriers(true);
     try {
       const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-      const res = await fetch(`/orders/${order.id}/shipping-cost`, {
+      const res = await fetch(`/orders/${order.order_id}/shipping-cost`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
       });
@@ -54,13 +54,13 @@ export default function CustomTermin({ order }) {
 
   const handleSaveCourier = () => {
     if (!selectedCourier) return;
-    router.patch(`/orders/${order.id}/shipping`, {
+    router.patch(`/orders/${order.order_id}/shipping`, {
       courier_name: selectedCourier.name, courier_service: selectedCourier.service, shipping_cost: selectedCourier.cost,
     });
   };
 
   const handleCancelCourier = () => { setCouriers(null); setSelectedCourier(null); };
-  const handleConfirmReceived = () => router.post(`/orders/${order.id}/confirm-received`);
+  const handleConfirmReceived = () => router.post(`/orders/${order.order_id}/confirm-received`);
   const copyResi = () => navigator.clipboard.writeText(order.tracking_number);
 
   const handlePayStage = (stageKey, options = {}) => {
@@ -105,7 +105,7 @@ export default function CustomTermin({ order }) {
       {showPaymentSummaryRow && <PaymentSummarySection order={order} />}
 
       <PopupMetodeBayar
-        orderId={order.id}
+        orderId={order.order_id}
         orderCode={order.order_code}
         stage={activeTerminStage}
         isOpen={metodeBayarOpen}

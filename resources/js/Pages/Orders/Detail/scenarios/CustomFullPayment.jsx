@@ -48,7 +48,7 @@ export default function CustomFullPayment({ order }) {
     setLoadingCouriers(true);
     try {
       const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-      const res = await fetch(`/orders/${order.id}/shipping-cost`, {
+      const res = await fetch(`/orders/${order.order_id}/shipping-cost`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
       });
@@ -61,13 +61,13 @@ export default function CustomFullPayment({ order }) {
 
   const handleSaveCourier = () => {
     if (!selectedCourier) return;
-    router.patch(`/orders/${order.id}/shipping`, {
+    router.patch(`/orders/${order.order_id}/shipping`, {
       courier_name: selectedCourier.name, courier_service: selectedCourier.service, shipping_cost: selectedCourier.cost,
     });
   };
 
   const handleCancelCourier = () => { setCouriers(null); setSelectedCourier(null); };
-  const handleConfirmReceived = () => router.post(`/orders/${order.id}/confirm-received`);
+  const handleConfirmReceived = () => router.post(`/orders/${order.order_id}/confirm-received`);
   const copyResi = () => navigator.clipboard.writeText(order.tracking_number);
 
   return (
@@ -82,7 +82,7 @@ export default function CustomFullPayment({ order }) {
             <PaymentMethodSelectionCard order={order} />
           ) : order.payment_method === 'qris' ? (
             <QrisPaymentCard
-              orderId={order.id}
+              orderId={order.order_id}
               orderCode={order.order_code}
               totalFormatted={formatPrice(order.total_price)}
               paymentDeadline={order.payment_deadline}
@@ -90,7 +90,7 @@ export default function CustomFullPayment({ order }) {
             />
           ) : showPaymentInstructionCard ? (
             <PaymentInstructionCard
-              orderId={order.id}
+              orderId={order.order_id}
               orderCode={order.order_code} totalFormatted={formatPrice(order.total_price)}
               bankName={order.bank_name} bankCode={order.bank_code}
               bankAccountNumber={order.bank_account_number} bankAccountName={order.bank_account_name}

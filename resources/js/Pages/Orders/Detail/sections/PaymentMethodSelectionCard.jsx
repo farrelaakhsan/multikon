@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { router, usePage } from '@inertiajs/react';
-import { Clock, Building2, Smartphone } from 'lucide-react';
+import { Clock, Building2, Smartphone, CreditCard, Lock } from 'lucide-react';
 import { formatPrice } from '../../../../utils/format';
 
 export default function PaymentMethodSelectionCard({ order }) {
   const { props } = usePage();
   const paymentSettings = props.paymentSettings || {};
   const bankAccounts = paymentSettings.bank_accounts || [];
+  const authUser = props.auth?.user ?? null;
+  const isB2bVerified = authUser?.is_b2b_verified ?? false;
 
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -14,7 +16,7 @@ export default function PaymentMethodSelectionCard({ order }) {
   const handleSelect = () => {
     if (!selectedMethod) return;
     setSaving(true);
-    router.patch(`/orders/${order.id}/payment-method`, {
+    router.patch(`/orders/${order.order_id}/payment-method`, {
       payment_method: selectedMethod,
     }, {
       preserveScroll: true,
@@ -106,6 +108,40 @@ export default function PaymentMethodSelectionCard({ order }) {
                 </p>
                 <p className="text-[11.5px] text-slate-500">Scan untuk bayar via e-wallet/m-banking</p>
               </div>
+            </button>
+
+            <button
+              type="button"
+              disabled={!isB2bVerified}
+              onClick={() => isB2bVerified && setSelectedMethod('top')}
+              className={`w-full flex items-center gap-3 rounded-xl px-4 py-3.5 text-left border-[1.5px] transition ${
+                !isB2bVerified
+                  ? 'border-slate-100 bg-slate-50 opacity-60 cursor-not-allowed'
+                  : selectedMethod === 'top'
+                    ? 'border-amber-500 bg-amber-50'
+                    : 'border-slate-200 hover:border-slate-300'
+              }`}
+            >
+              <div className={`w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center ${
+                selectedMethod === 'top' ? 'border-amber-500 bg-amber-500' : 'border-slate-300'
+              }`}>
+                {selectedMethod === 'top' && <span className="w-2 h-2 rounded-full bg-white" />}
+              </div>
+              <div className={selectedMethod === 'top' ? 'text-amber-600' : 'text-slate-400'}>
+                <CreditCard className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <p className={`text-[13.5px] font-semibold ${selectedMethod === 'top' ? 'text-amber-800' : 'text-slate-800'}`}>
+                  Term of Payment
+                </p>
+                <p className="text-[11.5px] text-slate-500">Bayar belakangan sesuai tenggat waktu</p>
+              </div>
+              {!isB2bVerified && (
+                <div className="flex items-center gap-1 text-[11px] text-slate-400 shrink-0">
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Akun belum terverifikasi</span>
+                </div>
+              )}
             </button>
           </div>
         </div>

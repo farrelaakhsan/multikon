@@ -30,8 +30,14 @@ export default function TopPoSection({ order }) {
           <div className="text-slate-900 text-[13.5px] font-medium">{order.payment_label}</div>
         </div>
 
-        {/* Notice info — hanya muncul saat menunggu verifikasi */}
-        {order.po_verification_status !== 'verified' && (
+        {/* Notice info — bedakan belum upload vs sedang diperiksa */}
+        {order.po_verification_status === null && !order.po_document_url && (
+          <div className="bg-amber-50 rounded-xl px-4 py-3.5 flex items-start gap-2.5 mb-4">
+            <Info className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+            <p className="text-amber-700 text-xs leading-relaxed">Anda belum mengunggah dokumen Purchase Order (PO). Silakan hubungi admin untuk mengunggah dokumen PO Anda.</p>
+          </div>
+        )}
+        {order.po_verification_status !== 'verified' && (order.po_verification_status === 'pending' || order.po_document_url) && (
           <div className="bg-blue-50 rounded-xl px-4 py-3.5 flex items-start gap-2.5 mb-4">
             <Info className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
             <p className="text-blue-700 text-xs leading-relaxed">Dokumen PO Anda sedang diperiksa admin sebelum pesanan diproses.</p>

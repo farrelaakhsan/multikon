@@ -124,7 +124,7 @@ function SidebarNavItem({ item, active, badgeCount }) {
 /* ─── Sidebar Footer ────────────────────────────────────────────────── */
 
 function SidebarFooter({ admin, onLogout, onGoPublic }) {
-    const initials = (admin?.name || "A")
+    const initials = (admin?.user_name || "A")
         .replace(/[^a-zA-Z0-9]/g, "")
         .slice(0, 2)
         .toUpperCase();
@@ -137,7 +137,7 @@ function SidebarFooter({ admin, onLogout, onGoPublic }) {
                 </div>
                 <div className="overflow-hidden">
                     <div className="text-[12.5px] font-medium text-slate-200 truncate">
-                        {admin?.name}
+                        {admin?.user_name}
                     </div>
                     <div className="text-[10.5px] text-slate-500 truncate">
                         {admin?.email}

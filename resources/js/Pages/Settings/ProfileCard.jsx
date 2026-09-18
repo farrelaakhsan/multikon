@@ -3,7 +3,7 @@ import { router } from "@inertiajs/react";
 import { User, Mail, AlertCircle } from "lucide-react";
 
 export default function ProfileCard({ user }) {
-    const [form, setForm] = useState({ name: user.name || "", email: user.email || "" });
+    const [form, setForm] = useState({ user_name: user.user_name || "", email: user.email || "" });
     const [errors, setErrors] = useState({});
     const [processing, setProcessing] = useState(false);
 
@@ -29,7 +29,7 @@ export default function ProfileCard({ user }) {
                             <User size={22} />
                         </div>
                         <div>
-                            <p className="text-base font-medium text-slate-900">{user.name}</p>
+                            <p className="text-base font-medium text-slate-900">{user.user_name}</p>
                             <p className="text-[13px] text-slate-400">{user.email}</p>
                         </div>
                     </div>
@@ -46,17 +46,17 @@ export default function ProfileCard({ user }) {
                                 </div>
                                 <input
                                     type="text"
-                                    value={form.name}
-                                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                    value={form.user_name}
+                                    onChange={(e) => setForm({ ...form, user_name: e.target.value })}
                                     className={`w-full rounded-[10px] border px-3.5 py-2.5 pl-11 text-[13px] text-slate-900 bg-transparent outline-none transition ${
-                                        errors.name ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-slate-400"
+                                        errors.user_name ? "border-red-400 focus:border-red-500" : "border-slate-200 focus:border-slate-400"
                                     }`}
                                     placeholder="Masukkan nama lengkap"
                                 />
                             </div>
-                            {errors.name && (
+                            {errors.user_name && (
                                 <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
-                                    <AlertCircle className="w-3 h-3" />{errors.name}
+                                    <AlertCircle className="w-3 h-3" />{errors.user_name}
                                 </p>
                             )}
                         </div>

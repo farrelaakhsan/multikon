@@ -2,12 +2,18 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuidPrimaryKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 
 class OrderItem extends Model
 {
+    use HasUuidPrimaryKey;
+    protected $primaryKey = 'order_item_id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+    protected $uuidRouteKeyName = 'order_item_id';
+
     public const LINE_READY = 'ready_stock';
     public const LINE_CUSTOM = 'custom';
 
@@ -37,12 +43,12 @@ class OrderItem extends Model
 
     public function order(): BelongsTo
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class, 'order_id', 'order_id');
     }
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id', 'product_id');
     }
 
     public function getIsCustomAttribute(): bool

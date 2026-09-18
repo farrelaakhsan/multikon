@@ -43,7 +43,7 @@ class CartController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'product_id' => ['required', 'integer', 'exists:products,id'],
+            'product_id' => ['required', 'string', 'exists:products,product_id'],
             'quantity'   => ['required', 'integer', 'min:1'],
         ]);
 
@@ -95,8 +95,7 @@ class CartController extends Controller
         $directBuy = false;
 
         if ($productId) {
-            // Direct buy: checkout langsung tanpa menambah ke keranjang.
-            $product = Product::findOrFail((int) $productId);
+            $product = Product::where('product_id', $productId)->firstOrFail();
             $quantity = max((int) ($request->query('quantity', 1)), 1);
             $items = collect([$this->formatDirectItem($product, $quantity)]);
             $directBuy = true;
@@ -107,7 +106,7 @@ class CartController extends Controller
             $items = $user
                 ->cartItems()
                 ->with('product')
-                ->whereIn('id', $itemIds)
+                ->whereIn('cart_item_id', $itemIds)
                 ->latest()
                 ->get()
                 ->map(fn (CartItem $item) => $this->formatItem($item));
@@ -137,11 +136,11 @@ class CartController extends Controller
 
         $validated = $request->validate([
             'cart_items'          => ['required_without:product_id', 'array', 'min:1'],
-            'cart_items.*'        => ['required', 'integer', 'exists:cart_items,id'],
-            'product_id'          => ['required_without:cart_items', 'integer', 'exists:products,id'],
+            'cart_items.*'        => ['required', 'string', 'exists:cart_items,cart_item_id'],
+            'product_id'          => ['required_without:cart_items', 'string', 'exists:products,product_id'],
             'quantity'            => ['required_without:cart_items', 'integer', 'min:1'],
             'whatsapp_number'     => ['nullable', 'string', 'max:20'],
-            'selected_address_id' => ['required', 'integer', 'exists:addresses,id'],
+            'selected_address_id' => ['required', 'string', 'exists:addresses,address_id'],
             'shipping_type'       => ['nullable', 'string', 'in:cargo,pickup'],
             'notes'               => ['nullable', 'string', 'max:1000'],
             'payment_method'      => ['required', 'string', 'in:' . implode(',', $paymentMethods)],
@@ -157,16 +156,14 @@ class CartController extends Controller
 
         $user = $request->user();
 
-        $address = \App\Models\Address::findOrFail($validated['selected_address_id']);
+        $address = \App\Models\Address::where('address_id', $validated['selected_address_id'])->firstOrFail();
 
-        if ($address->user_id !== $user->id) {
+        if ($address->user_id !== $user->user_id) {
             abort(403);
         }
 
-        // Direct buy: user memilih "Beli" di katalog/detail produk, true
-        // checkout langsung tanpa menambah ke keranjang.
         if ($validated['product_id'] ?? false) {
-            $product = Product::findOrFail($validated['product_id']);
+            $product = Product::where('product_id', $validated['product_id'])->firstOrFail();
             $quantity = max((int) ($validated['quantity'] ?? 1), 1);
 
             $items = collect([(object) [
@@ -178,7 +175,7 @@ class CartController extends Controller
         } else {
             $items = $user->cartItems()
                 ->with('product')
-                ->whereIn('id', $validated['cart_items'])
+                ->whereIn('cart_item_id', $validated['cart_items'])
                 ->get();
 
             if ($items->isEmpty()) {
@@ -204,7 +201,6 @@ class CartController extends Controller
             $poPath = $request->file('po_document')->store('po_documents', 'public');
         }
 
-        // Validasi stok untuk produk ready stock SEBELUM transaksi dimulai.
         foreach ($items as $item) {
             $product = $item->product ?? $item->product ?? null;
             if (! $product || $product->is_customizable) {
@@ -212,7 +208,7 @@ class CartController extends Controller
             }
             $qty = $item->quantity;
             if ((int) $product->stock < $qty) {
-                return redirect()->back()->with('error', "Stok \"{$product->name}\" tidak mencukupi. Tersisa {$product->stock} unit.");
+                return redirect()->back()->with('error', "Stok \"{$product->product_name}\" tidak mencukupi. Tersisa {$product->stock} unit.");
             }
         }
 
@@ -220,8 +216,6 @@ class CartController extends Controller
             $items, $validated, $user, $address, $isTop, $poPath,
             $shippingMethod, $shippingCost, $courierName, $courierService, $fromCart
         ) {
-            // Kelompokkan item keranjang per kategori: Ready Stock vs Custom.
-            // Item dengan kategori yang sama menjadi SATU pesanan.
             $readyItems = $items->filter(fn ($item) => ! (bool) ($item->product?->is_customizable ?? false))->values();
             $customItems = $items->filter(fn ($item) => (bool) ($item->product?->is_customizable ?? false))->values();
 
@@ -254,8 +248,8 @@ class CartController extends Controller
 
                 $order = Order::create([
                     'order_type'          => $group['order_type'],
-                    'user_id'             => $user->id,
-                    'customer_name'       => $user->name,
+                    'user_id'             => $user->user_id,
+                    'customer_name'       => $user->user_name,
                     'whatsapp_number'     => $validated['whatsapp_number'],
                     'address'             => $address->address,
                     'shipping_method'     => $shippingMethod,
@@ -281,16 +275,15 @@ class CartController extends Controller
 
                     $subtotal = ($product->price ?? 0) * $cartItem->quantity;
                     $order->items()->create([
-                        'product_id'   => $product->id,
+                        'product_id'   => $product->product_id,
                         'line_type'    => $group['order_type'] === 'custom' ? 'custom' : 'ready_stock',
-                        'product_name' => $product->name,
+                        'product_name' => $product->product_name,
                         'quantity'     => $cartItem->quantity,
                         'unit_price'   => $product->price ?? 0,
                         'dpp'          => round($subtotal / 1.11, 2),
                         'ppn'          => round(($subtotal / 1.11) * 0.11, 2),
                     ]);
 
-                    // Kurangi stok untuk produk ready stock.
                     if ($group['order_type'] === 'ready_stock') {
                         $product->decrementStock($cartItem->quantity);
                     }
@@ -300,8 +293,8 @@ class CartController extends Controller
                 $totalCreditUsed += $isTop ? $orderTotal : 0;
 
                 if ($fromCart) {
-                    $groupItemIds = $groupItems->pluck('id')->all();
-                    $user->cartItems()->whereIn('id', $groupItemIds)->delete();
+                    $groupItemIds = $groupItems->pluck('cart_item_id')->all();
+                    $user->cartItems()->whereIn('cart_item_id', $groupItemIds)->delete();
                 }
             }
 
@@ -323,10 +316,6 @@ class CartController extends Controller
             ->with('success', count($createdOrders) . ' pesanan berhasil dibuat: ' . implode(', ', $codes));
     }
 
-    /**
-     * Validasi khusus Pembayaran Tempo (ToP): user B2B, produk ready stock,
-     * dokumen PO wajib, dan sisa limit kredit mencukupi.
-     */
     private function validateToPAllowed(
         \App\Models\User $user,
         \Illuminate\Support\Collection $items,
@@ -409,18 +398,18 @@ class CartController extends Controller
     {
         $validated = $request->validate([
             'product_ids'                  => ['required', 'array', 'min:1'],
-            'product_ids.*'                => ['required', 'integer', 'exists:products,id'],
+            'product_ids.*'                => ['required', 'string', 'exists:products,product_id'],
             'destination_subdistrict_id'   => ['required', 'integer'],
             'quantities'                   => ['nullable', 'array'],
             'quantities.*'                 => ['nullable', 'integer', 'min:1'],
         ]);
 
-        $products = Product::whereIn('id', $validated['product_ids'])->get();
+        $products = Product::whereIn('product_id', $validated['product_ids'])->get();
         $quantities = $validated['quantities'] ?? [];
 
         $totalWeight = 0;
         foreach ($products as $product) {
-            $qty = (int) ($quantities[$product->id] ?? 1);
+            $qty = (int) ($quantities[$product->product_id] ?? 1);
             $weight = (float) ($product->weight ?? 0);
             $totalWeight += $weight * $qty;
         }
@@ -436,7 +425,6 @@ class CartController extends Controller
             return response()->json(['error' => 'Tidak ada kurir tersedia untuk rute ini.'], 404);
         }
 
-        // Group flat API items by courier code into {name, code, costs[]} format
         $grouped = [];
         foreach ($costs as $item) {
             $code = $item['code'] ?? '';
@@ -477,7 +465,7 @@ class CartController extends Controller
 
     private function authorizeOwner(Request $request, CartItem $cartItem): void
     {
-        if ($cartItem->user_id !== $request->user()->id) {
+        if ($cartItem->user_id !== $request->user()->user_id) {
             abort(403);
         }
     }
@@ -488,33 +476,29 @@ class CartController extends Controller
         $price = $product?->price ?? 0;
 
         return [
-            'id'            => $item->id,
-            'product_id'    => $item->product_id,
-            'quantity'      => $item->quantity,
-            'product_name'  => $product?->name ?? 'Produk tidak ditemukan',
-            'product_image' => $product?->image_url ?? null,
-            'category'      => $product?->category ?? '',
-            'price'         => $price,
-            'weight'        => $product?->weight ?? 0,
-            'subtotal'      => $price * $item->quantity,
-            'is_customizable' => $product?->is_customizable ?? false,
-            'stock'         => $product?->stock ?? 0,
+            'cart_item_id'   => $item->cart_item_id,
+            'product_id'     => $item->product_id,
+            'quantity'       => $item->quantity,
+            'product_name'   => $product?->product_name ?? 'Produk tidak ditemukan',
+            'product_image'  => $product?->image_url ?? null,
+            'category'       => $product?->category ?? '',
+            'price'          => $price,
+            'weight'         => $product?->weight ?? 0,
+            'subtotal'       => $price * $item->quantity,
+            'is_customizable'=> $product?->is_customizable ?? false,
+            'stock'          => $product?->stock ?? 0,
         ];
     }
 
-    /**
-     * Ringkasan item untuk alur direct buy (tombol "Beli").
-     * Mengembalikan bentuk yang sama dengan formatItem().
-     */
     private function formatDirectItem(Product $product, int $quantity): array
     {
         $price = $product->price ?? 0;
 
         return [
-            'id'              => 'direct-' . $product->id,
-            'product_id'      => $product->id,
+            'cart_item_id'    => 'direct-' . $product->product_id,
+            'product_id'      => $product->product_id,
             'quantity'        => $quantity,
-            'product_name'    => $product->name,
+            'product_name'    => $product->product_name,
             'product_image'   => $product->image_url ?? null,
             'category'        => $product->category ?? '',
             'price'           => $price,

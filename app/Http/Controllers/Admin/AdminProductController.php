@@ -17,8 +17,8 @@ class AdminProductController extends Controller
         $products = Product::latest()
             ->paginate(20)
             ->through(fn ($p) => [
-                'id'       => $p->id,
-                'name'     => $p->name,
+                'product_id'    => $p->product_id,
+                'product_name'  => $p->product_name,
                 'category' => $p->category,
                 'price'    => $p->price,
                 'image_url' => $p->image_url,
@@ -41,7 +41,7 @@ class AdminProductController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name'               => ['required', 'string', 'max:255'],
+            'product_name'      => ['required', 'string', 'max:255'],
             'category'           => ['required', 'string', 'max:255'],
             'description'        => ['required', 'string'],
             'price'              => ['required', 'numeric', 'min:0'],
@@ -72,8 +72,8 @@ class AdminProductController extends Controller
     {
         return Inertia::render('Admin/Products/Form', [
             'product' => [
-                'id'             => $product->id,
-                'name'           => $product->name,
+                'product_id'      => $product->product_id,
+                'product_name'    => $product->product_name,
                 'category'       => $product->category,
                 'description'    => $product->description,
                 'price'          => $product->price,
@@ -92,7 +92,7 @@ class AdminProductController extends Controller
     public function update(Request $request, Product $product): RedirectResponse
     {
         $data = $request->validate([
-            'name'               => ['required', 'string', 'max:255'],
+            'product_name'      => ['required', 'string', 'max:255'],
             'category'           => ['required', 'string', 'max:255'],
             'description'        => ['required', 'string'],
             'price'              => ['required', 'numeric', 'min:0'],

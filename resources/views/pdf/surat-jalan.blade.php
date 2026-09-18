@@ -56,13 +56,13 @@
         </tr>
         <tr>
             <td class="lbl">Dikirim Kepada</td>
-            <td><strong>{{ $receiver_name ?? $buyer['name'] }}</strong></td>
+            <td><strong>{{ $receiver_name ?? $buyer['user_name'] }}</strong></td>
             <td class="lbl">NPWP</td>
             <td>{{ $buyer['npwp_display'] ?? '-' }}</td>
         </tr>
         <tr>
             <td class="lbl">Penerima / PIC</td>
-            <td>{{ $receiver_name ?: $buyer['name'] }}</td>
+            <td>{{ $receiver_name ?: $buyer['user_name'] }}</td>
             <td class="lbl">Kontak (WhatsApp)</td>
             <td>{{ $receiver_contact }}</td>
         </tr>

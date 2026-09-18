@@ -14,7 +14,7 @@ export default function OrderSummarySidebar({ items, total, shippingCost, shippi
             {items && items.length > 0 && (
                 <div className="divide-y divide-slate-100">
                     {items.map((item) => (
-                        <div key={item.id} className="p-4 md:p-5 flex gap-3">
+                        <div key={item.cart_item_id} className="p-4 md:p-5 flex gap-3">
                             <ProductImage src={item.product_image} alt={item.product_name} className="w-16 h-16 rounded-xl object-cover shrink-0" />
                             <div className="flex-1 min-w-0">
                                 <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#F59E0B] mb-0.5">{item.category}</p>

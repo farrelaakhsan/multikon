@@ -17,13 +17,13 @@ export default function CustomCreate({
     termin_scheme = [],
 }) {
     const defaultAddress = addresses.find((a) => a.is_default) || addresses[0] || null;
-    const selectedAddress = addresses.find((a) => a.id === defaultAddress?.id) || defaultAddress;
+    const selectedAddress = addresses.find((a) => a.address_id === defaultAddress?.address_id) || defaultAddress;
 
     const { data, setData, post, processing, errors } = useForm({
         whatsapp_number: defaultAddress?.receiver_phone || "",
-        selected_address_id: defaultAddress?.id || null,
-        product_name: product?.name || "",
-        product_id: product?.id || null,
+        selected_address_id: defaultAddress?.address_id || null,
+        product_name: product?.product_name || "",
+        product_id: product?.product_id || null,
         requirements: "",
         specifications: "",
         quantity: 1,
@@ -38,7 +38,7 @@ export default function CustomCreate({
     });
 
     const handleAddressSelect = (addr) => {
-        setData("selected_address_id", addr.id);
+        setData("selected_address_id", addr.address_id);
         setData("whatsapp_number", addr.receiver_phone || "");
         setData("subdistrict_id", addr.subdistrict_id || "");
         setData("subdistrict_name", addr.subdistrict_name || "");
@@ -93,7 +93,7 @@ export default function CustomCreate({
                                             selectedAddress={selectedAddress}
                                             onSelect={handleAddressSelect}
                                             error={errors.address}
-                                            userName={user.name}
+                                            userName={user.user_name}
                                         />
                                     </div>
                                     <div className="md:col-span-2 border-t border-slate-100 pt-5 mt-2">
@@ -201,10 +201,10 @@ export default function CustomCreate({
                                 <div className="p-6">
                                     {product ? (
                                         <div className="flex gap-4">
-                                            <ProductImage src={product.image_url} alt={product.name} className="w-20 h-20 rounded-xl object-cover" />
+                                            <ProductImage src={product.image_url} alt={product.product_name} className="w-20 h-20 rounded-xl object-cover" />
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#F59E0B] mb-1">{product.category}</p>
-                                                <h3 className="text-sm font-black uppercase tracking-tight text-[#1E293B] line-clamp-2">{product.name}</h3>
+                                                <h3 className="text-sm font-black uppercase tracking-tight text-[#1E293B] line-clamp-2">{product.product_name}</h3>
                                                 <p className="text-lg font-black text-[#1E293B] mt-1">Rp {formatPrice(product.price)}</p>
                                             </div>
                                         </div>

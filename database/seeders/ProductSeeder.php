@@ -36,12 +36,12 @@ class ProductSeeder extends Seeder
             $baseSlug = Str::slug($name);
             $slug = $baseSlug;
             $suffix = 2;
-            while (isset($item['_slug_used'][$slug]) || Product::where('slug', $slug)->where('name', '!=', $name)->exists()) {
+            while (isset($item['_slug_used'][$slug]) || Product::where('slug', $slug)->where('product_name', '!=', $name)->exists()) {
                 $slug = $baseSlug . '-' . $suffix++;
             }
 
             $data = [
-                'name' => $name,
+                'product_name' => $name,
                 'slug' => $slug,
                 'category' => $item['category'] ?? 'General',
                 'description' => $item['description'] ?? '',

@@ -99,7 +99,7 @@ export default function TerminMilestoneCard({ terminOrders }) {
                 <div className="flex flex-col gap-3.5">
                     {terminOrders.map((order) => (
                         <TerminOrderCard
-                            key={order.id}
+                            key={order.order_id}
                             order={order}
                         />
                     ))}

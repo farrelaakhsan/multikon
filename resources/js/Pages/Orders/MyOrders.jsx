@@ -63,7 +63,7 @@ export default function MyOrders({ orders, activeFilter = 'all' }) {
         {orders?.data?.length > 0 ? (
           <div className="space-y-5">
             {orders.data.map((order) => (
-              <OrderCard key={order.id} order={order} />
+              <OrderCard key={order.order_id} order={order} />
             ))}
           </div>
         ) : (

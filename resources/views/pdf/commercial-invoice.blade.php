@@ -83,7 +83,7 @@
         </tr>
         <tr>
             <td class="lbl">Kepada</td>
-            <td><strong>{{ $buyer['name'] }}</strong></td>
+            <td><strong>{{ $buyer['user_name'] }}</strong></td>
             <td class="lbl">NPWP Pembeli</td>
             <td>{{ $buyer['npwp_display'] ?? '-' }}</td>
         </tr>

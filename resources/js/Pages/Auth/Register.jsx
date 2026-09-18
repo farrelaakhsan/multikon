@@ -2,7 +2,7 @@ import { Head, Link, useForm } from "@inertiajs/react";
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: "",
+        user_name: "",
         email: "",
         password: "",
         password_confirmation: "",
@@ -49,18 +49,18 @@ export default function Register() {
                             </label>
                             <input
                                 type="text"
-                                value={data.name}
+                                value={data.user_name}
                                 onChange={(e) =>
-                                    setData("name", e.target.value)
+                                    setData("user_name", e.target.value)
                                 }
                                 autoFocus
                                 autoComplete="name"
                                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#F59E0B] focus:ring-4 focus:ring-[#F59E0B]/20 transition"
                                 placeholder="Nama lengkap Anda"
                             />
-                            {errors.name && (
+                            {errors.user_name && (
                                 <p className="text-xs text-red-500 mt-1.5">
-                                    {errors.name}
+                                    {errors.user_name}
                                 </p>
                             )}
                         </div>

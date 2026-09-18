@@ -2,11 +2,18 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuidPrimaryKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Address extends Model
 {
+    use HasUuidPrimaryKey;
+    protected $primaryKey = 'address_id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+    protected $uuidRouteKeyName = 'address_id';
+
     protected $fillable = [
         'user_id',
         'label',
@@ -30,6 +37,6 @@ class Address extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 }

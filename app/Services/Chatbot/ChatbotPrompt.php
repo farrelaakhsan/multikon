@@ -71,7 +71,7 @@ PROMPT);
         if (isset($payload['product']) && is_array($payload['product'])) {
             $product = $payload['product'];
             $lines[] = 'PRODUCT:';
-            $lines[] = '- name: '           . ($product['name']          ?? '-');
+            $lines[] = '- name: '           . ($product['product_name'] ?? '-');
             $lines[] = '- category: '       . ($product['category']       ?? '-');
             $lines[] = '- description: '    . ($product['description']    ?? '-');
             $lines[] = '- price: '          . ($product['price']          ?? '-');

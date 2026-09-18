@@ -28,7 +28,7 @@ export default function B2BManage({
         e.preventDefault();
         if (!selectedCompany) return;
         router.post(
-            `/admin/b2b/${selectedCompany.id}/credit-limit`,
+            `/admin/b2b/${selectedCompany.user_id}/credit-limit`,
             {
                 credit_limit: form.credit_limit,
                 top_tenure_days: form.top_tenure_days,
@@ -47,7 +47,7 @@ export default function B2BManage({
     const confirmFreeze = () => {
         if (!freezeTarget) return;
         router.post(
-            `/admin/b2b/${freezeTarget.id}/toggle-top`,
+            `/admin/b2b/${freezeTarget.user_id}/toggle-top`,
             {
                 top_disabled: freezeTarget.top_disabled ? 0 : 1,
                 _method: "PATCH",
@@ -115,7 +115,7 @@ export default function B2BManage({
 
             <FreezeToPConfirm
                 open={!!freezeTarget}
-                companyName={freezeTarget?.company_name || freezeTarget?.name || ""}
+                companyName={freezeTarget?.company_name || freezeTarget?.user_name || ""}
                 isFrozen={freezeTarget?.top_disabled}
                 onClose={() => setFreezeTarget(null)}
                 onConfirm={confirmFreeze}

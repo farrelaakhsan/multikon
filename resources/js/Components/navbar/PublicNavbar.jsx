@@ -170,7 +170,7 @@ export default function PublicNavbar() {
                                                 <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl border border-[#1E293B]/10 shadow-xl shadow-black/10 overflow-hidden">
                                                     <div className="px-5 py-4 border-b border-slate-100">
                                                         <p className="text-xs font-bold text-[#1E293B] truncate">
-                                                            {user.name}
+                                                             {user.user_name}
                                                         </p>
                                                         <p className="text-[9px] text-slate-400 mt-0.5 truncate">
                                                             {user.email}

@@ -12,7 +12,7 @@ export default function ProductForm({ product }) {
     const isEdit = !!product;
 
     const [data, setData] = useState({
-        name: product?.name || "",
+        product_name: product?.product_name || "",
         price: product?.price ? String(product.price).replace(/\.\d+$/, "") : "",
         description: product?.description || "",
         specifications: product?.specifications || "",
@@ -37,7 +37,7 @@ export default function ProductForm({ product }) {
         setErrors({});
 
         const payload = {
-            name: data.name,
+            product_name: data.product_name,
             price: data.price,
             description: data.description,
             specifications: data.specifications,
@@ -56,7 +56,7 @@ export default function ProductForm({ product }) {
 
         if (isEdit) {
             payload._method = "PUT";
-            router.post(`/admin/products/${product.id}`, payload, {
+            router.post(`/admin/products/${product.product_id}`, payload, {
                 forceFormData: true,
                 onError: (e) => { setErrors(e); setProcessing(false); },
                 onFinish: () => setProcessing(false),

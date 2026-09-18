@@ -91,7 +91,7 @@
             <td colspan="4">
                 <div class="pkc">
                     <div class="pkc-title">Pembeli Barang Kena Pajak</div>
-                    <div class="pkc-name">{{ $buyer['name'] }}</div>
+                    <div class="pkc-name">{{ $buyer['user_name'] }}</div>
                     <div>NPWP: {{ $buyer['npwp_display'] ?? '-' }}</div>
                     <div>Alamat: {{ $address }}</div>
                 </div>
@@ -150,7 +150,7 @@
                 <td><div class="placeholder">(Tanda Tangan &amp; Stempel)</div></td>
             </tr>
             <tr>
-                <td style="padding-top:6px">{{ $buyer['name'] }}</td>
+                <td style="padding-top:6px">{{ $buyer['user_name'] }}</td>
                 <td style="padding-top:6px">{{ $company['director'] }} — {{ $company['name'] }}</td>
             </tr>
         </table>

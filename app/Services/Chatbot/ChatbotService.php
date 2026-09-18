@@ -192,8 +192,8 @@ class ChatbotService
             return $title;
         }
 
-        if (isset($payload['product']['name']) && trim((string) $payload['product']['name']) !== '') {
-            return trim((string) $payload['product']['name']);
+        if (isset($payload['product']['product_name']) && trim((string) $payload['product']['product_name']) !== '') {
+            return trim((string) $payload['product']['product_name']);
         }
 
         return Str::limit($message, 42, '...');

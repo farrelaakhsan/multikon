@@ -45,13 +45,13 @@ export default function ChatIndex({ conversations }) {
                         <div className="divide-y divide-slate-100">
                             {conversations.map((conv) => (
                                 <Link
-                                    key={conv.id}
-                                    href={`/admin/chats/${conv.id}`}
+                                    key={conv.conversation_id}
+                                    href={`/admin/chats/${conv.conversation_id}`}
                                     className="flex items-center gap-4 px-6 py-5 hover:bg-[#F8F9FA] transition group"
                                 >
                                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shrink-0">
                                         <span className="text-[#1E293B] text-sm font-black">
-                                            {conv.user.name.charAt(0).toUpperCase()}
+                                            {conv.user.user_name.charAt(0).toUpperCase()}
                                         </span>
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -62,7 +62,7 @@ export default function ChatIndex({ conversations }) {
                                                     conv.unread ? "font-black text-[#1E293B]" : "font-bold text-[#1E293B]",
                                                 ].join(" ")}
                                             >
-                                                {conv.user.name}
+                                                {conv.user.user_name}
                                             </h4>
                                             {conv.unread && (
                                                 <span className="w-2 h-2 rounded-full bg-[#F59E0B] shrink-0" />

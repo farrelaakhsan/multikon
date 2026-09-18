@@ -12,7 +12,7 @@ export default function CreditLimitModal({ company, form, setForm, onSubmit, onC
             title="Edit limit kredit"
             subtitle={
                 company
-                    ? `${company.company_name || company.name} \u00b7 Perubahan limit berlaku langsung setelah disimpan.`
+                    ? `${company.company_name || company.user_name} \u00b7 Perubahan limit berlaku langsung setelah disimpan.`
                     : undefined
             }
             width="w-[380px]"

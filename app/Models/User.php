@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuidPrimaryKey;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -10,7 +11,12 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, HasUuidPrimaryKey, Notifiable;
+
+    protected $primaryKey = 'user_id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+    protected $uuidRouteKeyName = 'user_id';
 
     public const B2B_STATUS_NONE     = 'none';
     public const B2B_STATUS_PENDING  = 'pending';
@@ -30,7 +36,7 @@ class User extends Authenticatable
     ];
 
     protected $fillable = [
-        'name',
+        'user_name',
         'email',
         'password',
         'is_admin',
@@ -93,26 +99,26 @@ class User extends Authenticatable
 
     public function cartItems(): HasMany
     {
-        return $this->hasMany(CartItem::class);
+        return $this->hasMany(CartItem::class, 'user_id', 'user_id');
     }
 
     public function orders(): HasMany
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class, 'user_id', 'user_id');
     }
 
     public function addresses(): HasMany
     {
-        return $this->hasMany(Address::class);
+        return $this->hasMany(Address::class, 'user_id', 'user_id');
     }
 
     public function b2bApplications(): HasMany
     {
-        return $this->hasMany(B2bApplication::class)->latest();
+        return $this->hasMany(B2bApplication::class, 'user_id', 'user_id')->latest();
     }
 
     public function latestB2bApplication(): HasOne
     {
-        return $this->hasOne(B2bApplication::class)->latestOfMany();
+        return $this->hasOne(B2bApplication::class, 'user_id', 'user_id')->latestOfMany('created_at');
     }
 }

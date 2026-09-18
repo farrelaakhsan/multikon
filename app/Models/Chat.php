@@ -2,11 +2,18 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuidPrimaryKey;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 
 class Chat extends Model
 {
+    use HasUuidPrimaryKey;
+    protected $primaryKey = 'chat_id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+    protected $uuidRouteKeyName = 'chat_id';
+
     protected $fillable = [
         'user_id',
         'session_id',
@@ -22,6 +29,6 @@ class Chat extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 }

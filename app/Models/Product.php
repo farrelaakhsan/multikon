@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuidPrimaryKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
@@ -9,9 +10,15 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
+    use HasUuidPrimaryKey;
+    protected $primaryKey = 'product_id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+    protected $uuidRouteKeyName = 'product_id';
+
     const DISPLAY_COLUMNS = [
-        'id',
-        'name',
+        'product_id',
+        'product_name',
         'slug',
         'category',
         'description',
@@ -26,7 +33,7 @@ class Product extends Model
     ];
 
     protected $fillable = [
-        'name',
+        'product_name',
         'slug',
         'category',
         'description',
@@ -46,24 +53,16 @@ class Product extends Model
         'is_customizable' => 'boolean',
     ];
 
-    /**
-     * Otomatis tambahkan image_url ke setiap response.
-     * Kalau image = URL eksternal (http) → langsung pakai.
-     * Kalau image = path storage (products/xxx.jpg) → tambahkan /storage/ di depan.
-     * Kalau image = null → kirim null, frontend pakai fallback.
-     */
     public function getImageUrlAttribute(): ?string
     {
         if (! $this->image) {
             return null;
         }
 
-        // Kalau sudah berupa URL lengkap (https://...)
         if (str_starts_with($this->image, 'http')) {
             return $this->image;
         }
 
-        // Kalau path storage
         return Storage::url($this->image);
     }
 
@@ -72,11 +71,11 @@ class Product extends Model
     protected static function booted(): void
     {
         static::saving(function (Product $product) {
-            if (empty($product->slug) && !empty($product->name)) {
-                $base = Str::slug($product->name);
+            if (empty($product->slug) && !empty($product->product_name)) {
+                $base = Str::slug($product->product_name);
                 $slug = $base;
                 $i = 2;
-                while (static::where('slug', $slug)->where('id', '!=', $product->id ?? 0)->exists()) {
+                while (static::where('slug', $slug)->where('product_id', '!=', $product->product_id ?? '')->exists()) {
                     $slug = $base . '-' . $i++;
                 }
                 $product->slug = $slug;
@@ -86,13 +85,14 @@ class Product extends Model
 
     public function orders(): HasMany
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class, 'product_id', 'product_id');
     }
 
-    /**
-     * Kurangi stok produk jika stok mencukupi.
-     * Mengembalikan true jika berhasil, false jika stok tidak cukup.
-     */
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class, 'product_id', 'product_id');
+    }
+
     public function decrementStock(int $quantity): bool
     {
         if ($this->is_customizable) {
@@ -108,9 +108,6 @@ class Product extends Model
         return true;
     }
 
-    /**
-     * Kembalikan stok produk (untuk pembatalan pesanan).
-     */
     public function restoreStock(int $quantity): void
     {
         if ($this->is_customizable) {

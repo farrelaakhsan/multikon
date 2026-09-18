@@ -111,7 +111,7 @@ const DEFAULT_STATUS = {
 
 export default function OrderCard({ order }) {
   const status = STATUS_MAP[order.status] || DEFAULT_STATUS;
-  const needsAction = order.status === 'pending_payment' || order.status === 'waiting_payment';
+  const needsAction = (order.status === 'pending_payment' || order.status === 'waiting_payment') && order.payment_method !== 'top';
   const paymentLabel = order.payment_method?.startsWith('bank_')
     ? 'Transfer Bank Manual'
     : order.payment_method === 'qris'

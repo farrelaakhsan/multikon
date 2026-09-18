@@ -44,7 +44,7 @@ export default function Checkout({
                   icon: "⏳",
                   desc: top_disabled
                       ? "Fasilitas ToP sedang dibekukan admin"
-                      : `Bayar kemudian dalam ${top_tenure_days} hari setelah invoice (khusus B2B)`,
+                      : "Bayar dalam 30 hari setelah barang diterima (Khusus Akun Bisnis)",
                   account: null,
                   accountName: null,
                   locked: !is_b2b_verified || top_disabled,
@@ -67,7 +67,7 @@ export default function Checkout({
               }]
             : []),
         ...(qrisAvailable
-            ? [{ key: "qris", label: "QRIS", icon: "\uD83D\uDCF1", desc: "Scan QR code di halaman konfirmasi order", account: null, accountName: null }]
+            ? [{ key: "qris", label: "QRIS", icon: "\uD83D\uDCF1", desc: "Scan QR code pada halaman pembayaran", account: null, accountName: null }]
             : []),
         ...topMethod,
     ];
@@ -76,7 +76,7 @@ export default function Checkout({
 
     const [form, setForm] = useState({
         whatsapp_number: defaultAddress?.receiver_phone || "",
-        selected_address_id: defaultAddress?.id || null,
+        selected_address_id: defaultAddress?.address_id || null,
         shipping_type: "",
         notes: "",
         payment_method: "",
@@ -97,7 +97,7 @@ export default function Checkout({
     const [courierOptions, setCourierOptions] = useState([]);
     const [courierError, setCourierError] = useState("");
 
-    const selectedAddress = addresses.find((a) => a.id === form.selected_address_id) || defaultAddress;
+    const selectedAddress = addresses.find((a) => a.address_id === form.selected_address_id) || defaultAddress;
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
@@ -164,7 +164,7 @@ export default function Checkout({
     };
 
     const handleAddressSelect = (addr) => {
-        update("selected_address_id", addr.id);
+        update("selected_address_id", addr.address_id);
         update("whatsapp_number", addr.receiver_phone || "");
         update("subdistrict_id", addr.subdistrict_id || "");
         update("subdistrict_name", addr.subdistrict_name || "");
@@ -202,13 +202,13 @@ export default function Checkout({
 
         if (hasError) { setErrors(newErrors); return; }
 
-        const itemIds = items.map((i) => i.id);
+        const itemIds = items.map((i) => i.cart_item_id);
         const directItem = items[0] || null;
 
         setProcessing(true);
         router.post("/cart/checkout", {
             ...(direct_buy && directItem
-                ? { product_id: Number(directItem.product_id), quantity: Number(directItem.quantity) }
+                ? { product_id: directItem.product_id, quantity: Number(directItem.quantity) }
                 : { cart_items: itemIds }),
             selected_address_id: form.selected_address_id,
             whatsapp_number: form.whatsapp_number,
@@ -222,7 +222,7 @@ export default function Checkout({
             subdistrict_name: form.subdistrict_name || "",
             district_name: form.district_name || "",
             city_name: form.city_name || "",
-            po_document: form.payment_method === "top" ? poFile : null,
+            ...(form.payment_method === "top" && poFile ? { po_document: poFile } : {}),
         }, {
             forceFormData: true,
             onError: (errs) => {
@@ -265,7 +265,7 @@ export default function Checkout({
                                             selectedAddress={selectedAddress}
                                             onSelect={handleAddressSelect}
                                             error={errors.address}
-                                            userName={props.auth.user?.name}
+                                            userName={props.auth.user?.user_name}
                                         />
                                     </div>
                                     <div className="md:col-span-2">

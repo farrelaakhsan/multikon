@@ -25,7 +25,7 @@ export default function DocumentSection({ order, authUser }) {
                 </div>
               </div>
               <a
-                href={`/orders/${order.id}/documents/${doc.type}`}
+                href={`/orders/${order.order_id}/documents/${doc.type}`}
                 className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-pill border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition"
               >
                 <Download className="w-3.5 h-3.5" />

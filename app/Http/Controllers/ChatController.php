@@ -18,13 +18,13 @@ class ChatController extends Controller
         $user = $request->user();
 
         $conversation = Conversation::firstOrCreate(
-            ['user_id' => $user->id, 'status' => 'active'],
-            ['user_id' => $user->id, 'status' => 'active'],
+            ['user_id' => $user->user_id, 'status' => 'active'],
+            ['user_id' => $user->user_id, 'status' => 'active'],
         );
 
         $message = Message::create([
-            'conversation_id' => $conversation->id,
-            'user_id' => $user->id,
+            'conversation_id' => $conversation->conversation_id,
+            'user_id' => $user->user_id,
             'message' => $validated['message'],
             'sender_type' => 'user',
         ]);
@@ -32,7 +32,7 @@ class ChatController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'id' => $message->id,
+                'message_id' => $message->message_id,
                 'message' => $message->message,
                 'sender_type' => $message->sender_type,
                 'created_at' => $message->created_at->toISOString(),
@@ -43,13 +43,13 @@ class ChatController extends Controller
     public function poll(Request $request): JsonResponse
     {
         $request->validate([
-            'since_id' => ['nullable', 'integer', 'min:0'],
+            'since_id' => ['nullable', 'string', 'max:36'],
         ]);
 
         $user = $request->user();
-        $sinceId = (int) $request->input('since_id', 0);
+        $sinceId = $request->input('since_id', '');
 
-        $conversation = Conversation::where('user_id', $user->id)
+        $conversation = Conversation::where('user_id', $user->user_id)
             ->where('status', 'active')
             ->first();
 
@@ -60,12 +60,16 @@ class ChatController extends Controller
             ]);
         }
 
-        $messages = Message::where('conversation_id', $conversation->id)
-            ->where('id', '>', $sinceId)
-            ->orderBy('id')
+        $query = Message::where('conversation_id', $conversation->conversation_id);
+        if ($sinceId) {
+            $query->where('message_id', '>', $sinceId);
+        }
+
+        $messages = $query
+            ->orderBy('message_id')
             ->get()
             ->map(fn ($m) => [
-                'id' => $m->id,
+                'message_id' => $m->message_id,
                 'message' => $m->message,
                 'sender_type' => $m->sender_type,
                 'created_at' => $m->created_at->toISOString(),

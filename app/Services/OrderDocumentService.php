@@ -251,7 +251,7 @@ class OrderDocumentService
             : collect([(object) [
                 'product_name' => $order->order_type === 'custom'
                     ? ($order->custom_requirements ?? 'Pesanan Custom')
-                    : ($order->product?->name ?? '-'),
+                    : ($order->product?->product_name ?? '-'),
                 'quantity'     => $order->order_type === 'custom'
                     ? (int) ($order->custom_quantity ?? 1)
                     : (int) ($order->quantity ?? 1),
@@ -267,7 +267,7 @@ class OrderDocumentService
             $qty = (int) ($item->quantity ?? 1);
 
             return [
-                'product_name' => $item->product_name ?? $item->product?->name ?? '-',
+                'product_name' => $item->product_name ?? $item->product?->product_name ?? '-',
                 'quantity'     => $qty,
                 'unit_price'   => $unit,
                 'subtotal'     => round($unit * $qty, 2),
@@ -277,7 +277,7 @@ class OrderDocumentService
 
     private function buyerData(?User $user): array
     {
-        $name = $user?->name ?? '-';
+        $name = $user?->user_name ?? '-';
         $companyName = null;
         $npwp = null;
 
@@ -290,7 +290,7 @@ class OrderDocumentService
         }
 
         return [
-            'name'         => $companyName ?: $name,
+            'user_name'    => $companyName ?: $name,
             'company'      => $companyName,
             'npwp'         => $npwp,
             'npwp_display' => $npwp ? $this->formatNpwp($npwp) : null,
@@ -333,7 +333,7 @@ class OrderDocumentService
         }
 
         return OrderDocument::create([
-            'order_id'        => $order->id,
+            'order_id'        => $order->order_id,
             'type'            => $type,
             'document_number' => $number,
             'file_path'       => $path,
@@ -347,7 +347,7 @@ class OrderDocumentService
 
     private function findIssued(Order $order, string $type, ?string $billKey): ?OrderDocument
     {
-        $query = OrderDocument::where('order_id', $order->id)->where('type', $type);
+        $query = OrderDocument::where('order_id', $order->order_id)->where('type', $type);
         if ($billKey !== null) {
             $query->whereJsonContains('metadata->bill_key', $billKey);
         }
@@ -357,7 +357,7 @@ class OrderDocumentService
 
     private function forgetIssued(Order $order, string $type, ?string $billKey): void
     {
-        $query = OrderDocument::where('order_id', $order->id)->where('type', $type);
+        $query = OrderDocument::where('order_id', $order->order_id)->where('type', $type);
         if ($billKey !== null) {
             $query->whereJsonContains('metadata->bill_key', $billKey);
         }

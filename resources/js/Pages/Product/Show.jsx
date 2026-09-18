@@ -38,7 +38,7 @@ export default function Show({ product, relatedProducts = [] }) {
     const warrantyLines = formatTextWithBullet(product.warranty || "");
 
     const handleAddToCart = () => {
-        router.post("/cart", { product_id: product.id, quantity }, { preserveScroll: true });
+        router.post("/cart", { product_id: product.product_id, quantity }, { preserveScroll: true });
     };
 
     const handleQuantityChange = (newQty) => {
@@ -58,7 +58,7 @@ export default function Show({ product, relatedProducts = [] }) {
             chatbotPayload={{ product }}
             hideChatbot={false}
         >
-            <Head title={product.name} />
+            <Head title={product.product_name} />
 
             <main className="bg-[#F8F9FA] min-h-screen">
                 <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
@@ -78,7 +78,7 @@ export default function Show({ product, relatedProducts = [] }) {
                             Product
                         </Link>
                         <span>›</span>
-                        <span className="text-[#1E293B]">{product.name}</span>
+                        <span className="text-[#1E293B]">{product.product_name}</span>
                     </div>
 
                     <div className="grid lg:grid-cols-[420px_minmax(0,1fr)] gap-6">
@@ -87,7 +87,7 @@ export default function Show({ product, relatedProducts = [] }) {
                             <div className="h-[300px] md:h-[420px] w-full lg:w-[420px] bg-slate-50 overflow-hidden flex items-start justify-start">
                                 <ProductImage
                                     src={product.image_url}
-                                    alt={product.name}
+                                    alt={product.product_name}
                                     className="w-full h-full object-contain object-top rounded-2xl"
                                 />
                             </div>
@@ -113,7 +113,7 @@ export default function Show({ product, relatedProducts = [] }) {
 
                             {/* Nama Produk */}
                             <h1 className="text-xl lg:text-2xl font-black italic uppercase tracking-tighter text-[#1E293B] leading-none mb-6">
-                                {product.name}
+                                {product.product_name}
                             </h1>
 
                             {/* Harga */}
@@ -256,14 +256,14 @@ export default function Show({ product, relatedProducts = [] }) {
                                 {isCustom ? (
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <Link
-                                    href={`/custom-order/create?product_id=${product.id}`}
+                                    href={`/custom-order/create?product_id=${product.product_id}`}
                                     className="px-6 py-4 rounded-xl font-black uppercase tracking-wider text-sm text-center bg-[#F59E0B] text-[#1E293B] shadow-lg shadow-[#F59E0B]/30 hover:brightness-105 transition"
                                 >
                                     Pesan Custom
                                 </Link>
                                 <button
                                     type="button"
-                                    onClick={() => router.visit(`/cart/checkout?product_id=${product.id}&quantity=${quantity}`)}
+                                    onClick={() => router.visit(`/cart/checkout?product_id=${product.product_id}&quantity=${quantity}`)}
                                     className="px-6 py-4 rounded-xl font-black uppercase tracking-wider text-sm text-center bg-[#1E293B] text-white shadow-lg shadow-[#1E293B]/20 hover:bg-[#1E293B]/90 transition"
                                 >
                                     Beli Ready Stock
@@ -285,7 +285,7 @@ export default function Show({ product, relatedProducts = [] }) {
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => router.visit(`/cart/checkout?product_id=${product.id}&quantity=${quantity}`)}
+                                            onClick={() => router.visit(`/cart/checkout?product_id=${product.product_id}&quantity=${quantity}`)}
                                             className="px-6 py-4 rounded-xl font-black uppercase tracking-wider text-sm text-center bg-[#F59E0B] text-[#1E293B] shadow-lg shadow-[#F59E0B]/30 hover:brightness-105 transition"
                                         >
                                             Beli

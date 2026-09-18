@@ -35,8 +35,8 @@ export default function OrderShow({ order }) {
     const isShipped = order.status === 'shipped';
 
     const copyCode = () => navigator.clipboard.writeText(order.order_code);
-    const handleConfirmPayment = () => router.post(`/admin/orders/${order.id}/confirm-payment`);
-    const handleRejectPayment = () => router.post(`/admin/orders/${order.id}/reject-payment`);
+    const handleConfirmPayment = () => router.post(`/admin/orders/${order.order_id}/confirm-payment`);
+    const handleRejectPayment = () => router.post(`/admin/orders/${order.order_id}/reject-payment`);
 
     const handleSubmitShipping = () => {
         const formData = new FormData();
@@ -44,11 +44,11 @@ export default function OrderShow({ order }) {
         formData.append('tracking_number', shippingForm.tracking_number);
         formData.append('driver_contact', shippingForm.driver_contact);
         if (shippingForm.proof) formData.append('shipping_proof', shippingForm.proof);
-        router.post(`/admin/orders/${order.id}/shipping`, formData, { forceFormData: true, onSuccess: () => setShippingModalOpen(false) });
+        router.post(`/admin/orders/${order.order_id}/shipping`, formData, { forceFormData: true, onSuccess: () => setShippingModalOpen(false) });
     };
 
     const handleSubmitPrice = () => {
-        router.patch(`/admin/orders/${order.id}/set-price`, {
+        router.patch(`/admin/orders/${order.order_id}/set-price`, {
             custom_price: priceForm.custom_price,
             estimated_weight: isCargo ? priceForm.estimated_weight : null,
         }, { onSuccess: () => setPriceModalOpen(false) });
@@ -56,7 +56,7 @@ export default function OrderShow({ order }) {
 
     const handleOverrideComplete = () => {
         const finalStatus = isCustom ? 'done' : 'completed';
-        router.patch(`/admin/orders/${order.id}/status`, { status: finalStatus });
+        router.patch(`/admin/orders/${order.order_id}/status`, { status: finalStatus });
     };
 
     const customerData = {
@@ -132,8 +132,8 @@ export default function OrderShow({ order }) {
 
                 <DocumentsCard
                     documents={order.documents}
-                    orderId={order.id}
-                    onReissue={(docType) => router.post(`/admin/orders/${order.id}/documents/${docType}/issue`)}
+                    orderId={order.order_id}
+                    onReissue={(docType) => router.post(`/admin/orders/${order.order_id}/documents/${docType}/issue`)}
                     accentColor={accentColor}
                 />
             </div>

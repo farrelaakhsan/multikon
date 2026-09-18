@@ -101,7 +101,7 @@ export default function TopPayment({ order, accentColor }) {
                     {order.settlement_status === 'pending' && (
                         <button
                             type="button"
-                            onClick={() => router.post(`/admin/orders/${order.id}/confirm-settlement`)}
+                            onClick={() => router.post(`/admin/orders/${order.order_id}/confirm-settlement`)}
                             className="w-full bg-emerald-600 text-white text-sm font-semibold py-3.5 rounded-xl hover:bg-emerald-700 transition"
                         >
                             Verifikasi Pelunasan
@@ -113,7 +113,7 @@ export default function TopPayment({ order, accentColor }) {
             {!poVerified && (
                 <button
                     type="button"
-                    onClick={() => router.post(`/admin/orders/${order.id}/verify-po`)}
+                    onClick={() => router.post(`/admin/orders/${order.order_id}/verify-po`)}
                     className="w-full bg-indigo-600 text-white text-sm font-semibold py-3.5 rounded-xl hover:bg-indigo-700 transition"
                 >
                     Verifikasi PO

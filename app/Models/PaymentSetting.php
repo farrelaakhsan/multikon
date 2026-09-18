@@ -2,10 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuidPrimaryKey;
 use Illuminate\Database\Eloquent\Model;
 
 class PaymentSetting extends Model
 {
+    use HasUuidPrimaryKey;
+    protected $primaryKey = 'payment_setting_id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected $fillable = ['key', 'value'];
 
     public static function getValue(string $key): ?string
@@ -22,7 +28,7 @@ class PaymentSetting extends Model
     {
         $settings = static::allAsArray();
         $accounts = json_decode($settings['bank_accounts'] ?? '[]', true) ?? [];
-        $methods = ['pending', 'qris'];
+        $methods = ['pending', 'qris', 'top'];
         foreach ($accounts as $i => $acc) {
             $methods[] = 'bank_' . $i;
         }

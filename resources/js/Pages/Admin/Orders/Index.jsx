@@ -96,7 +96,7 @@ export default function OrdersIndex({ orders, activeFilter = 'all', search: init
         {orders?.data?.length > 0 ? (
           <div className="space-y-3">
             {orders.data.map((order) => (
-              <OrderCard key={order.id} order={order} />
+              <OrderCard key={order.order_id} order={order} />
             ))}
           </div>
         ) : (
@@ -130,7 +130,7 @@ function OrderCard({ order }) {
 
   return (
     <Link
-      href={`/admin/orders/${order.id}`}
+      href={`/admin/orders/${order.order_id}`}
       className="relative block bg-white rounded-card border border-slate-200 shadow-card hover:shadow-card-hover transition-shadow overflow-hidden"
     >
       <div className={`absolute left-0 top-0 bottom-0 w-1 ${accent}`} />

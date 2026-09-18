@@ -30,7 +30,7 @@ export default function CompanyTableCard({ companies, onEdit, onToggleTop }) {
 
                         return (
                             <div
-                                key={c.id}
+                                key={c.user_id}
                                 className="bg-white rounded-[20px] border-l-4 border-emerald-500 overflow-hidden"
                             >
                                 {/* Header row */}
@@ -45,7 +45,7 @@ export default function CompanyTableCard({ companies, onEdit, onToggleTop }) {
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-base font-medium text-slate-800">
-                                                    {c.company_name || c.name}
+                                                    {c.company_name || c.user_name}
                                                 </span>
                                                 <span className="bg-emerald-50 text-emerald-700 text-[10.5px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1">
                                                     <BadgeCheck size={11} />
@@ -53,7 +53,7 @@ export default function CompanyTableCard({ companies, onEdit, onToggleTop }) {
                                                 </span>
                                             </div>
                                             <div className="text-xs text-slate-400 mt-0.5">
-                                                {c.name} &middot; NPWP{" "}
+                                                {c.user_name} &middot; NPWP{" "}
                                                 {c.company_npwp || "-"} &middot;
                                                 sejak {c.b2b_approved_at || "-"}
                                             </div>

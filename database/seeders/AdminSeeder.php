@@ -14,7 +14,7 @@ class AdminSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@multikon.test'],
             [
-                'name' => 'Admin Multikon',
+                'user_name' => 'Admin Multikon',
                 'password' => $plain,
                 'is_admin' => true,
                 'email_verified_at' => now(),

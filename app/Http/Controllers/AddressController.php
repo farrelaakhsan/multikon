@@ -95,7 +95,7 @@ class AddressController extends Controller
 
     private function authorizeOwner(Request $request, Address $address): void
     {
-        if ($address->user_id !== $request->user()->id) {
+        if ($address->user_id !== $request->user()->user_id) {
             abort(403);
         }
     }

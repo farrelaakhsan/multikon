@@ -123,16 +123,16 @@ export default function Catalog({ products, activeFilter = "all", activeSort = "
                             {items.map((product) => {
                                 const isOutOfStock = !product.is_customizable && (product.stock ?? 0) <= 0;
                                 return (
-                                <div key={product.id} className="relative">
+                                <div key={product.product_id} className="relative">
                                 <article
                                     className={`h-full bg-white rounded-2xl overflow-hidden border border-[#1E293B]/20 shadow-sm hover:border-[#F59E0B]/40 hover:shadow-lg transition-all group flex flex-col ${isOutOfStock ? 'opacity-60' : ''}`}
                                 >
                                     {/* Image */}
                                     <div className="relative overflow-hidden">
-                                        <Link href={`/catalog/${product.id}`}>
+                                        <Link href={`/catalog/${product.product_id}`}>
                                             <ProductImage
                                                 src={product.image_url}
-                                                alt={product.name}
+                                                alt={product.product_name}
                                                 className="w-full h-44 object-cover rounded-t-xl group-hover:scale-105 transition-transform duration-500"
                                             />
                                         </Link>
@@ -155,9 +155,9 @@ export default function Catalog({ products, activeFilter = "all", activeSort = "
                                         <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#F59E0B] mb-1">
                                             {product.category}
                                         </p>
-                                        <Link href={`/catalog/${product.id}`}>
+                                        <Link href={`/catalog/${product.product_id}`}>
                                             <h3 className="font-bold text-[#1E293B] text-sm leading-snug mb-2 group-hover:text-[#F59E0B] transition line-clamp-2">
-                                                {product.name}
+                                                {product.product_name}
                                             </h3>
                                         </Link>
 
@@ -173,13 +173,13 @@ export default function Catalog({ products, activeFilter = "all", activeSort = "
                                                 {product.is_customizable ? (
                                                     <>
                                                         <Link
-                                                            href={`/custom-order/create?product_id=${product.id}`}
+                                                            href={`/custom-order/create?product_id=${product.product_id}`}
                                                             className="flex-1 text-center bg-[#F59E0B] text-[#1E293B] text-[10px] py-3 rounded-lg font-black uppercase tracking-wider hover:brightness-105 transition"
                                                         >
                                                             Pesan
                                                         </Link>
                                                         <Link
-                                                            href={`/catalog/${product.id}`}
+                                                            href={`/catalog/${product.product_id}`}
                                                             className="flex-1 text-center border border-slate-200 text-slate-500 text-[10px] py-3 rounded-lg font-black uppercase tracking-wider hover:border-[#1E293B] hover:text-[#1E293B] transition"
                                                         >
                                                             Detail
@@ -190,7 +190,7 @@ export default function Catalog({ products, activeFilter = "all", activeSort = "
                                                 <button
                                                     type="button"
                                                     disabled={isOutOfStock}
-                                                    onClick={() => router.visit(`/cart/checkout?product_id=${product.id}&quantity=1`)}
+                                                    onClick={() => router.visit(`/cart/checkout?product_id=${product.product_id}&quantity=1`)}
                                                     className={`flex-1 text-center text-[10px] py-3 rounded-lg font-black uppercase tracking-wider transition ${
                                                         isOutOfStock
                                                             ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
@@ -200,7 +200,7 @@ export default function Catalog({ products, activeFilter = "all", activeSort = "
                                                     Beli
                                                 </button>
                                                         <Link
-                                                            href={`/catalog/${product.id}`}
+                                                            href={`/catalog/${product.product_id}`}
                                                             className="flex-1 text-center border border-slate-200 text-slate-500 text-[10px] py-3 rounded-lg font-black uppercase tracking-wider hover:border-[#1E293B] hover:text-[#1E293B] transition"
                                                         >
                                                             Detail

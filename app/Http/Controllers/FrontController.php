@@ -12,7 +12,7 @@ class FrontController extends Controller
     public function index(): Response
     {
         $featuredProducts = Product::query()
-            ->latest('id')
+            ->latest()
             ->take(3)
             ->get()
             ->map(fn ($p) => $this->formatProduct($p));
@@ -31,15 +31,15 @@ class FrontController extends Controller
 
         if ($search = $request->search) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
+                $q->where('product_name', 'like', "%{$search}%")
                   ->orWhere('category', 'like', "%{$search}%");
             });
         }
 
         if ($sort === 'latest') {
-            $query->latest('id');
+            $query->latest();
         } else {
-            $query->orderBy('category')->orderBy('name');
+            $query->orderBy('category')->orderBy('product_name');
         }
 
         if ($type === 'ready') {
@@ -64,7 +64,7 @@ class FrontController extends Controller
     public function show(Product $product): Response
     {
         $relatedProducts = Product::query()
-            ->where('id', '!=', $product->id)
+            ->where('product_id', '!=', $product->product_id)
             ->when(
                 $product->category,
                 fn ($q) => $q->where('category', $product->category)
@@ -109,22 +109,18 @@ class FrontController extends Controller
         return Inertia::render('TentangAplikasi');
     }
 
-    /**
-     * Format data produk untuk dikirim ke frontend.
-     * Selalu gunakan image_url (bukan image mentah).
-     */
     private function formatProduct(Product $p): array
     {
         return [
-            'id'                => $p->id,
-            'name'              => $p->name,
+            'product_id'        => $p->product_id,
+            'product_name'      => $p->product_name,
             'category'          => $p->category,
             'description'       => $p->description,
             'image'             => $p->image,
-            'image_url'        => $p->image_url,
+            'image_url'         => $p->image_url,
             'price'             => $p->price,
-            'specifications'   => $p->specifications,
-            'is_customizable'  => $p->is_customizable,
+            'specifications'    => $p->specifications,
+            'is_customizable'   => $p->is_customizable,
             'stock'             => $p->stock,
             'warranty'          => $p->warranty,
             'usage_instructions'=> $p->usage_instructions,

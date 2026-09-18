@@ -67,19 +67,19 @@ export default function ProductsIndex({ products }) {
                             ) : (
                                 items.map((product) => (
                                     <tr
-                                        key={product.id}
+                                         key={product.product_id}
                                         className="hover:bg-slate-50 transition"
                                     >
                                         <td className="px-5 py-4">
                                             <div className="flex items-center gap-3">
                                                 <ProductImage
                                                     src={product.image_url}
-                                                    alt={product.name}
+                                                     alt={product.product_name}
                                                     className="w-12 h-12 rounded-xl border border-slate-100"
                                                 />
                                                 <div>
                                                     <p className="text-sm font-black text-slate-900 italic uppercase tracking-tight">
-                                                        {product.name}
+                                                         {product.product_name}
                                                     </p>
                                                     <p className="text-xs text-slate-400 line-clamp-1 max-w-[200px]">
                                                         {product.description}
@@ -105,7 +105,7 @@ export default function ProductsIndex({ products }) {
                                         <td className="px-5 py-4">
                                             <div className="flex items-center gap-2">
                                                 <Link
-                                                    href={`/admin/products/${product.id}/edit`}
+                                                    href={`/admin/products/${product.product_id}/edit`}
                                                     className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-blue-600 hover:text-blue-600 transition"
                                                 >
                                                     Edit
@@ -114,8 +114,8 @@ export default function ProductsIndex({ products }) {
                                                     type="button"
                                                     onClick={() =>
                                                         handleDelete(
-                                                            product.id,
-                                                            product.name,
+                                                            product.product_id,
+                                                            product.product_name,
                                                         )
                                                     }
                                                     className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:border-red-500 hover:text-red-500 transition"

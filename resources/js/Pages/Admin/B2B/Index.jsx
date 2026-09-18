@@ -55,7 +55,7 @@ export default function B2BIndex({ applications }) {
                             ) : (
                                 items.map((app) => (
                                     <tr
-                                        key={app.id}
+                                        key={app.b2b_application_id}
                                         className="hover:bg-slate-50 transition"
                                     >
                                         <td className="px-5 py-4">
@@ -89,7 +89,7 @@ export default function B2BIndex({ applications }) {
                                         </td>
                                         <td className="px-5 py-4">
                                             <Link
-                                                href={`/admin/b2b/${app.id}`}
+                                                href={`/admin/b2b/${app.b2b_application_id}`}
                                                 className="text-[10px] font-black uppercase tracking-widest text-[#F59E0B] hover:underline"
                                             >
                                                 Tinjau →

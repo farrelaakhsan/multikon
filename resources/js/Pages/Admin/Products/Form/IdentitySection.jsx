@@ -9,12 +9,12 @@ export default function IdentitySection({ data, set, errors }) {
                     </label>
                     <input
                         type="text"
-                        value={data.name}
-                        onChange={(e) => set("name", e.target.value)}
+                        value={data.product_name}
+                        onChange={(e) => set("product_name", e.target.value)}
                         className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#F59E0B]/20 focus:border-[#F59E0B] transition-all"
                         placeholder="Masukkan nama produk"
                     />
-                    {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
+                    {errors.product_name && <p className="text-xs text-red-500 mt-1">{errors.product_name}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1.5">

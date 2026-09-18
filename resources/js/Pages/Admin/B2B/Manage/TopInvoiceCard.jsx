@@ -27,7 +27,7 @@ export default function TopInvoiceCard({ topOrders }) {
                 <div className="flex flex-col gap-3">
                     {topOrders.map((o) => (
                         <div
-                            key={o.id}
+                            key={o.order_id}
                             className={`bg-white rounded-[20px] border-l-4 px-6 py-5 ${
                                 o.overdue
                                     ? "border-red-500"
@@ -99,7 +99,7 @@ export default function TopInvoiceCard({ topOrders }) {
 
                             <div className="flex items-center gap-2 flex-wrap">
                                 <Link
-                                    href={`/admin/orders/${o.id}`}
+                                    href={`/admin/orders/${o.order_id}`}
                                     className="inline-flex items-center gap-1.5 px-4 py-2 rounded-pill bg-slate-100 text-xs font-black uppercase tracking-widest text-slate-600 hover:bg-slate-200 transition"
                                 >
                                     <FileText className="w-3.5 h-3.5" /> Detail

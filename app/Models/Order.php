@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuidPrimaryKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,12 @@ use Illuminate\Support\Str;
 
 class Order extends Model
 {
+    use HasUuidPrimaryKey;
+    protected $primaryKey = 'order_id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+    protected $uuidRouteKeyName = 'order_id';
+
     public const PAYMENT_TOP    = 'top';
     public const PAYMENT_TERMIN = 'termin';
 
@@ -84,9 +91,6 @@ class Order extends Model
         'transfer_date' => 'date',
     ];
 
-    /**
-     * Label teks untuk payment method.
-     */
     public function getPaymentLabelAttribute(): string
     {
         if (str_starts_with($this->payment_method, 'bank_')) {
@@ -106,32 +110,29 @@ class Order extends Model
         };
     }
 
-public function getStatusLabelAttribute(): string
-{
-    $labels = [
-        'pending_payment'       => 'Menunggu Pembayaran',
-        'waiting_confirmation'  => 'Menunggu Verifikasi',
-        'processing'            => 'Diproses',
-        'shipped'               => 'Dikirim / Pickup',
-        'completed'             => 'Selesai',
-        'cancelled'             => 'Dibatalkan',
-        'custom_consultation'  => 'Konsultasi Custom',
-        'confirmed'             => 'Dikonfirmasi',
-        'in_progress'          => 'Diproses',
-        'done'                  => 'Selesai',
-        'waiting_review'       => 'Menunggu Peninjauan',
-        'waiting_payment'       => 'Menunggu Pembayaran',
-        'in_production'         => 'Sedang Diproduksi',
-        'po_verification'       => 'Menunggu Verifikasi PO',
-        'waiting_settlement'    => 'Menunggu Pelunasan (H+30)',
-    ];
+    public function getStatusLabelAttribute(): string
+    {
+        $labels = [
+            'pending_payment'       => 'Menunggu Pembayaran',
+            'waiting_confirmation'  => 'Menunggu Verifikasi',
+            'processing'            => 'Diproses',
+            'shipped'               => 'Dikirim / Pickup',
+            'completed'             => 'Selesai',
+            'cancelled'             => 'Dibatalkan',
+            'custom_consultation'  => 'Konsultasi Custom',
+            'confirmed'             => 'Dikonfirmasi',
+            'in_progress'          => 'Diproses',
+            'done'                  => 'Selesai',
+            'waiting_review'       => 'Menunggu Peninjauan',
+            'waiting_payment'       => 'Menunggu Pembayaran',
+            'in_production'         => 'Sedang Diproduksi',
+            'po_verification'       => 'Menunggu Verifikasi PO',
+            'waiting_settlement'    => 'Menunggu Pelunasan (H+30)',
+        ];
 
-    return $labels[$this->status] ?? $this->status;
-}
+        return $labels[$this->status] ?? $this->status;
+    }
 
-    /**
-     * URL lengkap untuk bukti pembayaran.
-     */
     public function getPaymentProofUrlAttribute(): ?string
     {
         if (! $this->payment_proof) {
@@ -145,9 +146,6 @@ public function getStatusLabelAttribute(): string
         return asset('storage/payment_proofs/' . $this->payment_proof);
     }
 
-    /**
-     * URL lengkap untuk dokumen Purchase Order (PO).
-     */
     public function getPoDocumentUrlAttribute(): ?string
     {
         if (! $this->po_document) {
@@ -161,9 +159,6 @@ public function getStatusLabelAttribute(): string
         return asset('storage/' . $this->po_document);
     }
 
-    /**
-     * Label teks untuk status verifikasi dokumen PO.
-     */
     public function getPoVerificationLabelAttribute(): string
     {
         return match ($this->po_verification_status) {
@@ -175,22 +170,22 @@ public function getStatusLabelAttribute(): string
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id', 'product_id');
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
     public function items(): HasMany
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(OrderItem::class, 'order_id', 'order_id');
     }
 
     public function documents(): HasMany
     {
-        return $this->hasMany(OrderDocument::class)->latest('issued_at');
+        return $this->hasMany(OrderDocument::class, 'order_id', 'order_id')->latest('issued_at');
     }
 
     public function getTotalPriceAttribute(): float
@@ -200,11 +195,6 @@ public function getStatusLabelAttribute(): string
         return $subtotal + ($this->shipping_cost ?? 0);
     }
 
-    /**
-     * Subtotal seluruh line item pesanan.
-     * Mengutamakan order_items; fallback ke kolom produk legacy
-     * bila pesanan belum memiliki baris item.
-     */
     public function itemsSubtotal(): float
     {
         $items = $this->relationLoaded('items') ? $this->items : $this->items()->get();
@@ -238,9 +228,6 @@ public function getStatusLabelAttribute(): string
         return asset('storage/reference_files/' . $this->reference_file);
     }
 
-    /**
-     * URL lengkap untuk bukti pengiriman.
-     */
     public function getShippingProofUrlAttribute(): ?string
     {
         if (! $this->shipping_proof) {
@@ -254,9 +241,6 @@ public function getStatusLabelAttribute(): string
         return asset('storage/shipping_proofs/' . $this->shipping_proof);
     }
 
-    /**
-     * URL lengkap untuk bukti pelunasan ToP.
-     */
     public function getSettlementProofUrlAttribute(): ?string
     {
         if (! $this->settlement_proof) {
@@ -270,9 +254,6 @@ public function getStatusLabelAttribute(): string
         return asset('storage/settlement_proofs/' . $this->settlement_proof);
     }
 
-    /**
-     * Label teks untuk status pelunasan ToP.
-     */
     public function getSettlementLabelAttribute(): string
     {
         return match ($this->settlement_status) {
@@ -282,10 +263,6 @@ public function getStatusLabelAttribute(): string
         };
     }
 
-    /**
-     * Tanggal jatuh tempo ToP = tanggal barang dikirim (shipped_at) + tenure user
-     * (default 30 hari). Fallback ke po_verified_at bila pengiriman belum tercatat.
-     */
     public function getSettlementDueAtAttribute(): ?\Illuminate\Support\Carbon
     {
         $base = $this->shipped_at ?? $this->po_verified_at;
@@ -298,13 +275,6 @@ public function getStatusLabelAttribute(): string
         return $base->copy()->addDays((int) max($tenureDays, 1));
     }
 
-    /**
-     * Hitung status multi-tahap skema termin untuk frontend.
-     * Mengembalikan array { stages[], overallStatus, totalAmount }.
-     *
-     * Setiap stage memiliki status: lunas | menunggu_verifikasi | belum_bayar.
-     * Status diturunkan dari paid_bills + keberadaan proof_url pada bill.
-     */
     public function getTerminStateAttribute(): ?array
     {
         if ($this->payment_method !== self::PAYMENT_TERMIN) {
@@ -350,22 +320,16 @@ public function getStatusLabelAttribute(): string
         ];
     }
 
-    /**
-     * Konversi proof_url: jika berupa filename saja, generate full URL.
-     * Backward compatible untuk data lama yang sudah simpan full URL.
-     */
     private function resolveProofUrl(?string $value): ?string
     {
         if (! $value) {
             return null;
         }
 
-        // Jika sudah URL lengkap, kembalikan apa adanya
         if (filter_var($value, FILTER_VALIDATE_URL)) {
             return $value;
         }
 
-        // Jika hanya filename, generate URL
         return asset('storage/payment_proofs/' . $value);
     }
 
@@ -381,9 +345,6 @@ public function getStatusLabelAttribute(): string
         $this->saveQuietly();
     }
 
-    /**
-     * Auto-generate order code sebelum disimpan.
-     */
     protected static function booted(): void
     {
         static::creating(function (Order $order) {

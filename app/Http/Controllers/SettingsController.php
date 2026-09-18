@@ -16,8 +16,8 @@ class SettingsController extends Controller
     {
         return Inertia::render('Settings/Index', [
             'user' => [
-                'name'  => request()->user()->name,
-                'email' => request()->user()->email,
+                'user_name' => request()->user()->user_name,
+                'email'     => request()->user()->email,
             ],
         ]);
     }
@@ -37,8 +37,8 @@ class SettingsController extends Controller
 
         return Inertia::render('Settings/Profile', [
             'user' => [
-                'id'               => $user->id,
-                'name'             => $user->name,
+                'user_id'          => $user->user_id,
+                'user_name'        => $user->user_name,
                 'email'            => $user->email,
                 'b2b_status'       => $user->b2b_status,
                 'b2b_status_label' => $user->b2b_status_label,
@@ -52,14 +52,14 @@ class SettingsController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'name'  => ['required', 'string', 'max:255'],
+            'user_name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
                 'string',
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique('users')->ignore($user->id),
+                Rule::unique('users')->ignore($user->user_id, 'user_id'),
             ],
         ]);
 

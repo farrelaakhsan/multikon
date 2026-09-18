@@ -10,7 +10,7 @@ export default function CartItemCard({ item, selected, onToggle, onUpdateQty, on
         }`}>
             <div className="flex gap-4 md:gap-5">
                 <div className="flex items-start pt-2">
-                    <CartCheckbox checked={selected} onChange={() => onToggle(item.id)} />
+                    <CartCheckbox checked={selected} onChange={() => onToggle(item.cart_item_id)} />
                 </div>
 
                 <div className="flex gap-5 md:gap-7 flex-1 min-w-0">
@@ -40,7 +40,7 @@ export default function CartItemCard({ item, selected, onToggle, onUpdateQty, on
                             </div>
                             <button
                                 type="button"
-                                onClick={() => onRemove(item.id)}
+                                onClick={() => onRemove(item.cart_item_id)}
                                 className="shrink-0 w-8 h-8 rounded-xl bg-[#F8F9FA] flex items-center justify-center text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 transition-all"
                             >
                                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
@@ -65,8 +65,8 @@ export default function CartItemCard({ item, selected, onToggle, onUpdateQty, on
                                 <div className="flex items-center gap-3">
                                     <button
                                         type="button"
-                                        disabled={updating === item.id}
-                                        onClick={() => onUpdateQty(item.id, item.quantity - 1, item.stock)}
+                                        disabled={updating === item.cart_item_id}
+                                        onClick={() => onUpdateQty(item.cart_item_id, item.quantity - 1, item.stock)}
                                         className="w-9 h-9 rounded-xl border-2 border-slate-200 text-[#1E293B] font-black text-base hover:border-[#F59E0B] hover:bg-[#F59E0B]/10 disabled:opacity-40 transition"
                                     >
                                         -
@@ -76,8 +76,8 @@ export default function CartItemCard({ item, selected, onToggle, onUpdateQty, on
                                     </span>
                                     <button
                                         type="button"
-                                        disabled={updating === item.id}
-                                        onClick={() => onUpdateQty(item.id, item.quantity + 1, item.stock)}
+                                        disabled={updating === item.cart_item_id}
+                                        onClick={() => onUpdateQty(item.cart_item_id, item.quantity + 1, item.stock)}
                                         className="w-9 h-9 rounded-xl border-2 border-slate-200 text-[#1E293B] font-black text-base hover:border-[#F59E0B] hover:bg-[#F59E0B]/10 disabled:opacity-40 transition"
                                     >
                                         +

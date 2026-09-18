@@ -19,15 +19,15 @@ class AdminChatController extends Controller
             ->orderBy('updated_at', 'desc')
             ->get()
             ->map(fn ($c) => [
-                'id' => $c->id,
+                'conversation_id' => $c->conversation_id,
                 'user' => [
-                    'id' => $c->user->id,
-                    'name' => $c->user->name,
+                    'user_id' => $c->user->user_id,
+                    'user_name' => $c->user->user_name,
                     'email' => $c->user->email,
                 ],
                 'latest_message' => $c->latestMessage?->message,
                 'latest_message_at' => $c->latestMessage?->created_at?->toISOString(),
-                'unread' => Message::where('conversation_id', $c->id)
+                'unread' => Message::where('conversation_id', $c->conversation_id)
                     ->where('sender_type', 'user')
                     ->where('created_at', '>', $c->updated_at)
                     ->exists(),
@@ -43,25 +43,25 @@ class AdminChatController extends Controller
     {
         $conversation->load('user');
 
-        $messages = Message::where('conversation_id', $conversation->id)
-            ->orderBy('id')
+        $messages = Message::where('conversation_id', $conversation->conversation_id)
+            ->orderBy('message_id')
             ->get()
             ->map(fn ($m) => [
-                'id' => $m->id,
+                'message_id' => $m->message_id,
                 'message' => $m->message,
                 'sender_type' => $m->sender_type,
                 'sender_name' => $m->sender_type === 'admin'
-                    ? ($m->user->name ?? 'Admin')
-                    : $conversation->user->name,
+                    ? ($m->user->user_name ?? 'Admin')
+                    : $conversation->user->user_name,
                 'created_at' => $m->created_at->toISOString(),
             ]);
 
         return Inertia::render('Admin/Chat/Show', [
             'conversation' => [
-                'id' => $conversation->id,
+                'conversation_id' => $conversation->conversation_id,
                 'user' => [
-                    'id' => $conversation->user->id,
-                    'name' => $conversation->user->name,
+                    'user_id' => $conversation->user->user_id,
+                    'user_name' => $conversation->user->user_name,
                     'email' => $conversation->user->email,
                 ],
                 'status' => $conversation->status,
@@ -80,8 +80,8 @@ class AdminChatController extends Controller
         $admin = $request->user();
 
         Message::create([
-            'conversation_id' => $conversation->id,
-            'user_id' => $admin->id,
+            'conversation_id' => $conversation->conversation_id,
+            'user_id' => $admin->user_id,
             'message' => $validated['message'],
             'sender_type' => 'admin',
         ]);

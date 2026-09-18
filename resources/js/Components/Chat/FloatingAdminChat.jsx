@@ -9,7 +9,7 @@ export default function FloatingAdminChat({ isOpen, onClose }) {
     const [inputValue, setInputValue] = useState("");
     const [loading, setLoading] = useState(false);
     const [expanded, setExpanded] = useState(false);
-    const [sinceId, setSinceId] = useState(0);
+    const [sinceId, setSinceId] = useState('');
     const messagesEndRef = useRef(null);
     const pollRef = useRef(null);
 
@@ -24,17 +24,17 @@ export default function FloatingAdminChat({ isOpen, onClose }) {
     useEffect(() => {
         if (!isOpen) return;
 
-        setSinceId(0);
+        setSinceId('');
         setMessages([]);
 
-        fetch(`/chat/poll?since_id=0`, {
+        fetch(`/chat/poll?since_id=`, {
             headers: { Accept: "application/json", "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.content },
         })
             .then((r) => r.json())
             .then((res) => {
                 if (res.success && res.data.length > 0) {
                     setMessages(res.data);
-                    setSinceId(res.data[res.data.length - 1].id);
+                    setSinceId(res.data[res.data.length - 1].message_id);
                 }
             })
             .catch(() => {});
@@ -48,7 +48,7 @@ export default function FloatingAdminChat({ isOpen, onClose }) {
                     .then((res) => {
                         if (res.success && res.data.length > 0) {
                             setMessages((m) => [...m, ...res.data]);
-                            setSinceId(res.data[res.data.length - 1].id);
+                            setSinceId(res.data[res.data.length - 1].message_id);
                         }
                     })
                     .catch(() => {});
@@ -91,11 +91,11 @@ export default function FloatingAdminChat({ isOpen, onClose }) {
                 setMessages((m) =>
                     m.map((msg) =>
                         msg.id === tempId
-                            ? { ...msg, id: data.data.id, created_at: data.data.created_at }
+                            ? { ...msg, id: data.data.message_id, created_at: data.data.created_at }
                             : msg
                     )
                 );
-                setSinceId((prev) => Math.max(prev, data.data.id));
+                setSinceId((prev) => data.data.message_id);
             }
         } catch {
             setMessages((m) =>

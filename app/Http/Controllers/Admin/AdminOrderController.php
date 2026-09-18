@@ -90,7 +90,7 @@ class AdminOrderController extends Controller
         $orders = $query
             ->paginate(20)
             ->through(fn ($o) => [
-                'id'                 => $o->id,
+                'order_id'           => $o->order_id,
                 'order_code'         => $o->order_code,
                 'order_type'         => $o->order_type ?? 'ready_stock',
                 'customer_name'      => $o->customer_name,
@@ -204,7 +204,7 @@ class AdminOrderController extends Controller
 
         return Inertia::render('Admin/Orders/Show', [
             'order' => [
-                'id'                    => $order->id,
+                'order_id'              => $order->order_id,
                 'order_code'            => $order->order_code,
                 'order_type'            => $order->order_type ?? 'ready_stock',
                 'customer_name'         => $order->customer_name,
@@ -411,7 +411,7 @@ class AdminOrderController extends Controller
         $user->increment('remaining_credit', $creditUsed);
         $order->forceFill(['credit_restored_at' => now()])->save();
 
-        Log::info("[CreditRestore] SUCCESS — order {$order->order_code}: restored Rp" . number_format($creditUsed, 0, ',', '.') . " to user {$user->id} (remaining_credit={$user->fresh()->remaining_credit})");
+        Log::info("[CreditRestore] SUCCESS — order {$order->order_code}: restored Rp" . number_format($creditUsed, 0, ',', '.') . " to user {$user->user_id} (remaining_credit={$user->fresh()->remaining_credit})");
     }
 
     /**
@@ -641,13 +641,13 @@ class AdminOrderController extends Controller
     {
         if ($order->items->isNotEmpty()) {
             return $order->items->first()->product_name
-                ?? $order->items->first()->product?->name
+                ?? $order->items->first()->product?->product_name
                 ?? 'Pesanan Custom';
         }
 
         return $order->order_type === 'custom'
             ? ($order->custom_requirements ?? 'Pesanan Custom')
-            : ($order->product?->name ?? '-');
+            : ($order->product?->product_name ?? '-');
     }
 
     /**
@@ -678,11 +678,11 @@ class AdminOrderController extends Controller
             $qty = (int) ($item->quantity ?? 1);
 
             return [
-                'id'                    => $item->id ?? null,
+                'order_item_id'         => $item->order_item_id ?? null,
                 'product_id'            => $item->product_id ?? null,
                 'line_type'             => $item->line_type ?? 'ready_stock',
                 'is_custom'             => ($item->line_type ?? 'ready_stock') === 'custom',
-                'product_name'          => $item->product_name ?? ($item->product?->name ?? 'Produk'),
+                'product_name'          => $item->product_name ?? ($item->product?->product_name ?? 'Produk'),
                 'product_image'         => $item->product?->image_url ?? null,
                 'quantity'              => $qty,
                 'unit_price'            => $price,
@@ -706,10 +706,10 @@ class AdminOrderController extends Controller
         $product = $order->product;
 
         return (object) [
-            'id'                    => null,
+            'order_item_id'         => null,
             'product_id'            => $order->product_id,
             'line_type'             => $isCustom ? 'custom' : 'ready_stock',
-            'product_name'          => $isCustom ? ($order->custom_requirements ?? 'Pesanan Custom') : ($product?->name ?? '-'),
+            'product_name'          => $isCustom ? ($order->custom_requirements ?? 'Pesanan Custom') : ($product?->product_name ?? '-'),
             'product'               => $product,
             'quantity'              => $isCustom ? ($order->custom_quantity ?? 1) : ($order->quantity ?? 1),
             'unit_price'            => $isCustom ? ($order->custom_price ?? 0) : ($product?->price ?? 0),

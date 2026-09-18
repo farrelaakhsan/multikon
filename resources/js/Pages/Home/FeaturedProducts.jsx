@@ -31,14 +31,14 @@ export default function FeaturedProducts({ products = [] }) {
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                         {products.slice(0, 3).map((product) => (
                             <Link
-                                key={product.id}
-                                href={`/catalog/${product.id}`}
+                                key={product.product_id}
+                                href={`/catalog/${product.product_id}`}
                                 className="group bg-[#1E293B] rounded-2xl overflow-hidden hover:ring-1 hover:ring-[#F59E0B]/50 transition-all"
                             >
                                 <div className="overflow-hidden relative">
                                     <ProductImage
                                         src={product.image_url}
-                                        alt={product.name}
+                                        alt={product.product_name}
                                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500 brightness-75"
                                     />
                                     <span className="absolute top-3 left-3 bg-[#F59E0B] text-[#1E293B] text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full">
@@ -50,7 +50,7 @@ export default function FeaturedProducts({ products = [] }) {
                                         {product.category}
                                     </p>
                                     <h3 className="font-bold text-white text-sm leading-snug group-hover:text-[#F59E0B] transition">
-                                        {product.name}
+                                        {product.product_name}
                                     </h3>
                                     <p className="text-[9px] font-black uppercase tracking-wider text-slate-600 mt-3 group-hover:text-[#F59E0B]/60 transition">
                                         Lihat Detail →

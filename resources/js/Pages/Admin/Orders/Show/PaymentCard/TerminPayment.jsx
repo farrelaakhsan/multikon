@@ -41,7 +41,7 @@ export default function TerminPayment({ order, accentColor }) {
             {activeStage && activeStage.status === 'menunggu_verifikasi' && (
                 <TerminCardAdminMenungguVerifikasi
                     stage={activeStage}
-                    onVerify={() => router.post(`/admin/orders/${order.id}/confirm-payment`)}
+                    onVerify={() => router.post(`/admin/orders/${order.order_id}/confirm-payment`)}
                 />
             )}
 

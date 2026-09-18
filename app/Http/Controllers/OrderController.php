@@ -37,34 +37,34 @@ class OrderController extends Controller
 
         return Inertia::render('Orders/Payment', [
             'order'   => [
-                'id'               => $order->id,
-                'order_code'       => $order->order_code,
-                'order_type'       => $order->order_type,
-                'product_name'     => $items[0]['product_name'] ?? 'Pesanan Custom',
-                'product_image'    => $items[0]['product_image'] ?? null,
-                'product_price'    => $items[0]['unit_price'] ?? 0,
-                'items'            => $items,
-                'quantity'         => collect($items)->sum('quantity'),
-                'subtotal'         => $subtotal,
-                'shipping_cost'    => $shippingCost,
-                'total_price'      => $totalPrice,
-                'address'          => $order->address,
-                'payment_method'   => $order->payment_method,
-                'payment_label'    => $order->payment_label,
-                'payment_status'   => $order->payment_status,
-                'payment_proof'    => $order->payment_proof_url,
-                'sender_bank_name' => $order->sender_bank_name,
-                'transfer_date'    => $order->transfer_date?->format('Y-m-d'),
-                'shipping_method'  => $order->shipping_method,
-                'is_custom'        => $order->order_type === 'custom',
-                'whatsapp_number'  => $order->whatsapp_number,
-                'progress_steps'   => $this->flowService->buildSteps($order, 'user'),
-                'payment_deadline'     => $order->payment_deadline?->toISOString(),
-                'termin_bills'         => $order->termin_bills ?? [],
-                'paid_bills'           => $order->paid_bills ?? [],
-                'po_document_url'      => $order->po_document_url,
-                'po_verification_status' => $order->po_verification_status,
-                'po_document'          => $order->po_document,
+                'order_id'          => $order->order_id,
+                'order_code'        => $order->order_code,
+                'order_type'        => $order->order_type,
+                'product_name'      => $items[0]['product_name'] ?? 'Pesanan Custom',
+                'product_image'     => $items[0]['product_image'] ?? null,
+                'product_price'     => $items[0]['unit_price'] ?? 0,
+                'items'             => $items,
+                'quantity'          => collect($items)->sum('quantity'),
+                'subtotal'          => $subtotal,
+                'shipping_cost'     => $shippingCost,
+                'total_price'       => $totalPrice,
+                'address'           => $order->address,
+                'payment_method'    => $order->payment_method,
+                'payment_label'     => $order->payment_label,
+                'payment_status'    => $order->payment_status,
+                'payment_proof'     => $order->payment_proof_url,
+                'sender_bank_name'  => $order->sender_bank_name,
+                'transfer_date'     => $order->transfer_date?->format('Y-m-d'),
+                'shipping_method'   => $order->shipping_method,
+                'is_custom'         => $order->order_type === 'custom',
+                'whatsapp_number'   => $order->whatsapp_number,
+                'progress_steps'    => $this->flowService->buildSteps($order, 'user'),
+                'payment_deadline'      => $order->payment_deadline?->toISOString(),
+                'termin_bills'          => $order->termin_bills ?? [],
+                'paid_bills'            => $order->paid_bills ?? [],
+                'po_document_url'       => $order->po_document_url,
+                'po_verification_status'=> $order->po_verification_status,
+                'po_document'           => $order->po_document,
             ],
         ]);
     }
@@ -117,7 +117,7 @@ class OrderController extends Controller
 
         return Inertia::render('Orders/Payment', [
             'order'   => [
-                'id'               => $order->id,
+                'order_id'          => $order->order_id,
                 'order_code'       => $order->order_code,
                 'order_type'       => $order->order_type,
                 'product_name'     => $items[0]['product_name'] ?? 'Pesanan Custom',
@@ -205,7 +205,7 @@ class OrderController extends Controller
 
         return Inertia::render('Orders/Detail', [
             'order'    => [
-                'id'               => $order->id,
+                'order_id'          => $order->order_id,
                 'order_code'       => $order->order_code,
                 'customer_name'    => $order->customer_name,
                 'product_name'     => $items[0]['product_name'] ?? 'Pesanan Custom',
@@ -296,7 +296,7 @@ class OrderController extends Controller
             return false;
         }
 
-        return (bool) $user->is_admin || $order->user_id === $user->id;
+        return (bool) $user->is_admin || $order->user_id === $user->user_id;
     }
 
     /**
@@ -330,12 +330,12 @@ class OrderController extends Controller
     {
         $user = $request->user();
         $productId = $request->query('product_id');
-        $product = $productId ? Product::find($productId) : null;
+        $product = $productId ? Product::where('product_id', $productId)->first() : null;
         $addresses = $user?->addresses()->latest()->get();
 
         return Inertia::render('Orders/CustomCreate', [
             'product'          => $product ? $this->formatProduct($product) : null,
-            'user'             => $user ? ['name' => $user->name] : null,
+            'user'             => $user ? ['user_name' => $user->user_name] : null,
             'addresses'        => $addresses,
             'is_b2b_verified'  => $user?->is_b2b_verified ?? false,
             'termin_scheme'    => $user?->termin_scheme ?? [],
@@ -356,8 +356,8 @@ class OrderController extends Controller
             'shipping_method'     => ['required', 'string', 'in:cargo,pickup'],
             'estimated_weight'    => ['nullable', 'numeric', 'min:0'],
             'notes'               => ['nullable', 'string', 'max:1000'],
-            'selected_address_id' => ['required', 'exists:addresses,id'],
-            'product_id'          => ['nullable', 'exists:products,id'],
+            'selected_address_id' => ['required', 'exists:addresses,address_id'],
+            'product_id'          => ['nullable', 'exists:products,product_id'],
             'reference_file'      => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf,webp', 'max:5120'],
             'payment_method'      => ['nullable', 'string', 'in:instant,' . Order::PAYMENT_TERMIN],
         ]);
@@ -382,9 +382,9 @@ class OrderController extends Controller
 
         $order = Order::create([
             'order_type'            => 'custom',
-            'user_id'               => $user->id,
+            'user_id'               => $user->user_id,
             'product_id'            => $validated['product_id'],
-            'customer_name'         => $user->name,
+            'customer_name'         => $user->user_name,
             'whatsapp_number'       => $validated['whatsapp_number'],
             'address'               => $address->address,
             'shipping_method'       => $validated['shipping_method'],
@@ -426,7 +426,7 @@ class OrderController extends Controller
      */
     public function calculateShipping(Request $request, Order $order, RajaOngkirService $rajaOngkir): JsonResponse
     {
-        if ($order->user_id !== $request->user()->id) {
+        if ($order->user_id !== $request->user()->user_id) {
             abort(403);
         }
 
@@ -481,7 +481,7 @@ class OrderController extends Controller
      */
     public function selectShipping(Request $request, Order $order): RedirectResponse
     {
-        if ($order->user_id !== $request->user()->id) {
+        if ($order->user_id !== $request->user()->user_id) {
             abort(403);
         }
 
@@ -518,7 +518,7 @@ class OrderController extends Controller
             'completed' => ['completed', 'done'],
         ];
 
-        $query = $request->user()->orders()->with(['product', 'items.product'])->latest('id');
+        $query = $request->user()->orders()->with(['product', 'items.product'])->latest('order_id');
 
         if ($filter !== 'all' && isset($statusGroups[$filter])) {
             $query->whereIn('status', $statusGroups[$filter]);
@@ -531,7 +531,7 @@ class OrderController extends Controller
             $subtotal = collect($items)->sum('subtotal');
 
             return [
-                'id'              => $order->id,
+                'order_id'          => $order->order_id,
                 'order_code'      => $order->order_code,
                 'product_name'    => $first['product_name'] ?? 'Pesanan Custom',
                 'product_image'   => $first['product_image'] ?? null,
@@ -565,7 +565,7 @@ class OrderController extends Controller
      */
     public function updatePaymentMethod(Request $request, Order $order): RedirectResponse
     {
-        if ($order->user_id !== $request->user()->id) {
+        if ($order->user_id !== $request->user()->user_id) {
             abort(403);
         }
 
@@ -579,7 +579,19 @@ class OrderController extends Controller
             'payment_method' => ['required', 'string', 'in:' . implode(',', $validMethods)],
         ]);
 
-        $order->update(['payment_method' => $validated['payment_method']]);
+        if ($validated['payment_method'] === 'top') {
+            if (!$request->user()->is_b2b_verified) {
+                return back()->with('error', 'Term of Payment hanya tersedia untuk akun bisnis yang sudah terverifikasi.');
+            }
+            $order->update([
+                'payment_method'         => 'top',
+                'status'                 => 'po_verification',
+                'po_verification_status' => null,
+                'po_document'            => null,
+            ]);
+        } else {
+            $order->update(['payment_method' => $validated['payment_method']]);
+        }
 
         return back()->with('success', 'Metode pembayaran berhasil diubah.');
     }
@@ -647,7 +659,7 @@ class OrderController extends Controller
      */
     public function uploadSettlement(Request $request, Order $order): RedirectResponse
     {
-        if ($order->user_id !== $request->user()->id) {
+        if ($order->user_id !== $request->user()->user_id) {
             abort(403);
         }
 
@@ -686,7 +698,7 @@ class OrderController extends Controller
      */
     public function uploadTerminBill(Request $request, Order $order): RedirectResponse
     {
-        if ($order->user_id !== $request->user()->id) {
+        if ($order->user_id !== $request->user()->user_id) {
             abort(403);
         }
 
@@ -746,8 +758,8 @@ class OrderController extends Controller
     private function formatProduct(Product $p): array
     {
         return [
-            'id'                => $p->id,
-            'name'              => $p->name,
+            'product_id'        => $p->product_id,
+            'product_name'      => $p->product_name,
             'category'          => $p->category,
             'description'       => $p->description,
             'image'             => $p->image,
@@ -779,11 +791,11 @@ class OrderController extends Controller
             $qty = (int) ($item->quantity ?? 1);
 
             return [
-                'id'                    => $item->id ?? null,
+                'order_item_id'     => $item->order_item_id ?? null,
                 'product_id'            => $item->product_id ?? null,
                 'line_type'             => $item->line_type ?? 'ready_stock',
                 'is_custom'             => ($item->line_type ?? 'ready_stock') === 'custom',
-                'product_name'          => $item->product_name ?? ($item->product?->name ?? 'Produk'),
+                'product_name'          => $item->product_name ?? ($item->product?->product_name ?? 'Produk'),
                 'product_image'         => $item->product?->image_url ?? null,
                 'quantity'              => $qty,
                 'unit_price'            => $price,
@@ -825,10 +837,10 @@ class OrderController extends Controller
         $product = $order->product;
 
         return (object) [
-            'id'                    => null,
+            'order_item_id'        => null,
             'product_id'            => $order->product_id,
             'line_type'             => $isCustom ? 'custom' : 'ready_stock',
-            'product_name'          => $isCustom ? ($order->custom_requirements ?? 'Pesanan Custom') : ($product?->name ?? '-'),
+            'product_name'          => $isCustom ? ($order->custom_requirements ?? 'Pesanan Custom') : ($product?->product_name ?? '-'),
             'product'               => $product,
             'quantity'              => $isCustom ? ($order->custom_quantity ?? 1) : ($order->quantity ?? 1),
             'unit_price'            => $isCustom ? ($order->custom_price ?? 0) : ($product?->price ?? 0),

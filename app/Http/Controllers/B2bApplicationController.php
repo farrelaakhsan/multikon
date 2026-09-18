@@ -58,7 +58,7 @@ class B2bApplicationController extends Controller
                 User::B2B_STATUS_REJECTED,
             ], true),
             'latest_application' => $latest ? [
-                'id'              => $latest->id,
+                'b2b_application_id' => $latest->b2b_application_id,
                 'status'          => $latest->status,
                 'status_label'    => $latest->status_label,
                 'company_name'    => $latest->company_name,
@@ -97,7 +97,7 @@ class B2bApplicationController extends Controller
         $terminOrders = $user->orders()
             ->where('payment_method', Order::PAYMENT_TERMIN)
             ->whereNotIn('status', ['completed', 'done', 'cancelled'])
-            ->orderByDesc('id')
+            ->orderByDesc('order_id')
             ->with(['product', 'items'])
             ->get()
             ->map(fn (Order $o) => $this->serializeTerminOrder($o))
@@ -106,7 +106,7 @@ class B2bApplicationController extends Controller
         $documents = $user->orders()
             ->has('documents')
             ->with('documents')
-            ->orderByDesc('id')
+            ->orderByDesc('order_id')
             ->get()
             ->flatMap(function (Order $o) {
                 return $o->documents->map(fn ($d) => [
@@ -134,7 +134,7 @@ class B2bApplicationController extends Controller
         $overdue = $due !== null && $daysLeft < 0;
 
         return [
-            'id'                => $o->id,
+            'order_id'          => $o->order_id,
             'order_code'        => $o->order_code,
             'total_price'       => $o->total_price,
             'credit_used'       => $o->credit_used,
@@ -158,11 +158,11 @@ class B2bApplicationController extends Controller
         $firstItem = $o->items->first();
 
         return [
-            'id'           => $o->id,
+            'order_id'      => $o->order_id,
             'order_code'    => $o->order_code,
             'product_name' => $firstItem?->product_name
                 ?? $o->custom_requirements
-                ?? ($o->product?->name ?? 'Pesanan Custom'),
+                ?? ($o->product?->product_name ?? 'Pesanan Custom'),
             'total_price'    => $o->total_price,
             'status'        => $o->status,
             'current_bill'  => $currentBill ? [

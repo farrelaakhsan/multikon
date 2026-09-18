@@ -19,7 +19,7 @@ export default function ProductTableCard({ items, subtotal, shippingCost, total,
 
             {items.map((item, idx) => (
                 <div
-                    key={item.id || idx}
+                    key={item.order_item_id || idx}
                     className="grid grid-cols-[56px_1fr_140px_70px_140px] gap-3 items-center py-4 border-b border-slate-50 last:border-b-0"
                 >
                     <ProductImage src={item.product_image} alt={item.product_name} className="w-11 h-11 rounded-xl" />

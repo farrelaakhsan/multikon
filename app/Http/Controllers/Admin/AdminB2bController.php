@@ -24,12 +24,12 @@ class AdminB2bController extends Controller
             ->latest('updated_at')
             ->paginate(20)
             ->through(fn (B2bApplication $a) => [
-                'id'            => $a->id,
+                'b2b_application_id' => $a->b2b_application_id,
                 'status'        => $a->status,
                 'status_label'  => $a->status_label,
                 'company_name'  => $a->company_name,
                 'company_npwp'  => $a->company_npwp,
-                'user_name'     => $a->user?->name,
+                'user_name'     => $a->user?->user_name,
                 'user_email'    => $a->user?->email,
                 'created_at'    => $a->created_at?->format('d M Y H:i'),
             ]);
@@ -45,7 +45,7 @@ class AdminB2bController extends Controller
 
         return Inertia::render('Admin/B2B/Show', [
             'application' => [
-                'id'              => $application->id,
+                'b2b_application_id'    => $application->b2b_application_id,
                 'status'          => $application->status,
                 'status_label'    => $application->status_label,
                 'company_name'    => $application->company_name,
@@ -58,11 +58,11 @@ class AdminB2bController extends Controller
                 'top_tenure_days' => $application->top_tenure_days,
                 'rejection_reason'=> $application->rejection_reason,
                 'reviewed_at'     => $application->reviewed_at?->format('d M Y H:i'),
-                'reviewer_name'   => $application->reviewer?->name,
+                'reviewer_name'   => $application->reviewer?->user_name,
                 'created_at'      => $application->created_at?->format('d M Y H:i'),
                 'user'            => [
-                    'id'    => $application->user?->id,
-                    'name'  => $application->user?->name,
+                    'user_id'   => $application->user?->user_id,
+                    'user_name'  => $application->user?->user_name,
                     'email' => $application->user?->email,
                 ],
             ],
@@ -85,7 +85,7 @@ class AdminB2bController extends Controller
             'status'          => User::B2B_STATUS_APPROVED,
             'credit_limit'    => $data['credit_limit'],
             'top_tenure_days' => $data['top_tenure_days'],
-            'reviewed_by'     => $request->user()->id,
+            'reviewed_by'     => $request->user()->user_id,
             'reviewed_at'     => now(),
         ]);
 
@@ -116,7 +116,7 @@ class AdminB2bController extends Controller
         $application->update([
             'status'           => User::B2B_STATUS_REJECTED,
             'rejection_reason' => $data['rejection_reason'],
-            'reviewed_by'      => $request->user()->id,
+            'reviewed_by'      => $request->user()->user_id,
             'reviewed_at'      => now(),
         ]);
 
@@ -137,11 +137,11 @@ class AdminB2bController extends Controller
     {
         // Daftar perusahaan B2B approved
         $companies = User::where('b2b_status', User::B2B_STATUS_APPROVED)
-            ->orderBy('name')
+            ->orderBy('user_name')
             ->get()
             ->map(fn (User $u) => [
-                'id'               => $u->id,
-                'name'             => $u->name,
+                'user_id'            => $u->user_id,
+                'user_name'             => $u->user_name,
                 'email'            => $u->email,
                 'company_name'     => $u->latestB2bApplication?->company_name,
                 'company_npwp'     => $u->latestB2bApplication?->company_npwp,
@@ -164,7 +164,7 @@ class AdminB2bController extends Controller
                 $daysLeft = $due ? (int) now()->diffInDays($due, false) : null;
 
                 return [
-                    'id'                => $o->id,
+                    'order_id'              => $o->order_id,
                     'order_code'        => $o->order_code,
                     'customer_name'     => $o->customer_name,
                     'company_name'      => $o->user?->latestB2bApplication?->company_name,
@@ -187,10 +187,10 @@ class AdminB2bController extends Controller
         $terminOrders = Order::with('user')
             ->where('payment_method', Order::PAYMENT_TERMIN)
             ->whereNotIn('status', ['completed', 'done', 'cancelled'])
-            ->orderByDesc('id')
+            ->orderByDesc('order_id')
             ->get()
             ->map(fn (Order $o) => [
-                'id'           => $o->id,
+                'order_id'       => $o->order_id,
                 'order_code'   => $o->order_code,
                 'customer_name' => $o->customer_name,
                 'company_name' => $o->user?->latestB2bApplication?->company_name,
@@ -238,7 +238,7 @@ class AdminB2bController extends Controller
         ]);
 
         return redirect()->route('admin.b2b.manage')
-            ->with('success', 'Limit kredit ' . ($user->name) . ' berhasil diperbarui.');
+            ->with('success', 'Limit kredit ' . ($user->user_name) . ' berhasil diperbarui.');
     }
 
     /**
@@ -253,6 +253,6 @@ class AdminB2bController extends Controller
         $state = $user->top_disabled ? 'dibekukan' : 'diaktifkan kembali';
 
         return redirect()->route('admin.b2b.manage')
-            ->with('success', "Fasilitas ToP untuk {$user->name} berhasil {$state}.");
+            ->with('success', "Fasilitas ToP untuk {$user->user_name} berhasil {$state}.");
     }
 }

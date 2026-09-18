@@ -4,7 +4,7 @@ import AdminLayout from "../../../Layouts/AdminLayout";
 
 export default function ChatShow({ conversation, messages }) {
     const { props } = usePage();
-    const adminName = props.auth?.user?.name || "Admin";
+    const adminName = props.auth?.user?.user_name || "Admin";
     const [replyText, setReplyText] = useState("");
     const [sending, setSending] = useState(false);
     const sendingRef = useRef(false);
@@ -42,7 +42,7 @@ export default function ChatShow({ conversation, messages }) {
         sendingRef.current = true;
 
         router.post(
-            `/admin/chats/${conversation.id}/reply`,
+            `/admin/chats/${conversation.conversation_id}/reply`,
             { message: text },
             {
                 preserveScroll: true,
@@ -66,7 +66,7 @@ export default function ChatShow({ conversation, messages }) {
         }
     };
 
-    const userInitial = (conversation.user.name || "U").charAt(0).toUpperCase();
+    const userInitial = (conversation.user.user_name || "U").charAt(0).toUpperCase();
 
     return (
         <AdminLayout title="Konsultasi Custom">
@@ -91,7 +91,7 @@ export default function ChatShow({ conversation, messages }) {
                         <div className="min-w-0">
                             <div className="flex items-center gap-2">
                                 <h2 className="text-sm font-bold text-white truncate">
-                                    {conversation.user.name}
+                                    {conversation.user.user_name}
                                 </h2>
                                 <span className="text-[9px] px-2 py-0.5 rounded-full bg-white/10 text-amber-300 font-medium tracking-wide shrink-0">
                                     KONSULTASI
@@ -126,7 +126,7 @@ export default function ChatShow({ conversation, messages }) {
 
                     {messages.map((msg) => (
                         <div
-                            key={msg.id}
+                            key={msg.message_id}
                             className={[
                                 "flex gap-3 max-w-[70%] lg:max-w-[65%]",
                                 msg.sender_type === "admin" ? "ml-auto flex-row-reverse" : "",

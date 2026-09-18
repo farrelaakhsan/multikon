@@ -31,7 +31,7 @@ export default function SettingsAddresses({ addresses = [] }) {
     const handleSetDefault = async (addr) => {
         setProcessing(true);
         try {
-            const res = await fetch(`/addresses/${addr.id}/default`, {
+            const res = await fetch(`/addresses/${addr.address_id}/default`, {
                 method: "POST",
                 headers: { "X-CSRF-TOKEN": csrfToken, "X-Requested-With": "XMLHttpRequest" },
             });
@@ -49,7 +49,7 @@ export default function SettingsAddresses({ addresses = [] }) {
         try {
             const body = new URLSearchParams();
             body.append("_method", "DELETE");
-            const res = await fetch(`/addresses/${deletingAddress.id}`, {
+            const res = await fetch(`/addresses/${deletingAddress.address_id}`, {
                 method: "POST",
                 headers: { "X-CSRF-TOKEN": csrfToken, "X-Requested-With": "XMLHttpRequest" },
                 body,
@@ -92,7 +92,7 @@ export default function SettingsAddresses({ addresses = [] }) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {addresses.map((addr) => (
                             <AddressCard
-                                key={addr.id}
+                                key={addr.address_id}
                                 address={addr}
                                 onEdit={() => openEditForm(addr)}
                                 onDelete={() => setDeletingAddress(addr)}
